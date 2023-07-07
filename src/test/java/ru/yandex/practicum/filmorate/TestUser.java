@@ -46,8 +46,8 @@ public class TestUser {
 
 	@Test
 	public void postTestAddUser() throws Exception {
-		User user = new User("lilia@yandex.ru","Lilia","Alisa",
-				LocalDate.of(1900,5,15));
+		User user = new User("lilia@yandex.ru", "Lilia", "Alisa",
+				LocalDate.of(1900, 5, 15));
 		mockMvc.perform(post("/user")
 						.content(JsonToString(user))
 						.contentType(MediaType.APPLICATION_JSON)
@@ -58,8 +58,8 @@ public class TestUser {
 
 	@Test
 	public void postTestVerifyEmail() throws Exception {
-		User user = new User("svetasveta.com","Waza","Alisa",
-				LocalDate.of(1921,2,20));
+		User user = new User("svetasveta.com", "Waza", "Alisa",
+				LocalDate.of(1921, 2, 20));
 		mockMvc.perform(post("/user")
 						.content(JsonToString(user))
 						.contentType(MediaType.APPLICATION_JSON)
@@ -70,8 +70,8 @@ public class TestUser {
 
 	@Test
 	public void postTestVerifyLogin() throws Exception {
-		User user = new User("alina@yandex.ru","","Alina",
-				LocalDate.of(1990,3,1));
+		User user = new User("alina@yandex.ru", "", "Alina",
+				LocalDate.of(1990, 3, 1));
 		mockMvc.perform(post("/user")
 						.content(JsonToString(user))
 						.contentType(MediaType.APPLICATION_JSON)
@@ -82,8 +82,8 @@ public class TestUser {
 
 	@Test
 	public void postTestVerifyName() throws Exception {
-		User user = new User("alina@yandex.ru","allen"," ",
-				LocalDate.of(1990,2,15));
+		User user = new User("alina@yandex.ru", "allen", " ",
+				LocalDate.of(1990, 2, 15));
 		mockMvc.perform(post("/user")
 						.content(JsonToString(user))
 						.contentType(MediaType.APPLICATION_JSON)
@@ -94,8 +94,8 @@ public class TestUser {
 
 	@Test
 	public void postTestVerifyBirthday() throws Exception {
-		User user = new User("alina@yandex.ru","allen"," ",
-				LocalDate.of(3000,5,1));
+		User user = new User("alina@yandex.ru", "allen", " ",
+				LocalDate.of(3000, 5, 1));
 		mockMvc.perform(post("/user")
 						.content(JsonToString(user))
 						.contentType(MediaType.APPLICATION_JSON)

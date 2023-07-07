@@ -15,11 +15,11 @@ public class ServiceUser {
 	public final AtomicInteger idOfUser = new AtomicInteger();
 
 	public User verifyOptionsOfUser(User user) throws ValidationException {
-		if (user.getLogin().isBlank()){
+		if (user.getLogin().isBlank()) {
 			throw new ValidationException("Неправильное имя User");
-		} else if (user.getEmail().isBlank() || !EmailValidator.getInstance().isValid(user.getEmail())){
+		} else if (user.getEmail().isBlank() || !EmailValidator.getInstance().isValid(user.getEmail())) {
 			throw new ValidationException("Неправильный адрес электронной почты");
-		} else if (user.getBirthday().isAfter(LocalDate.now())){
+		} else if (user.getBirthday().isAfter(LocalDate.now())) {
 			throw new ValidationException("Неправильная дата рождения");
 		} else if (user.getName().isBlank() || user.getName() == null) {
 			user.setName(user.getLogin());
@@ -31,7 +31,7 @@ public class ServiceUser {
 
 	public void renewInfoOfUser(User user) {
 		amountOfUsers.forEach(a -> {
-			if (a.getId() == user.getId()){
+			if (a.getId() == user.getId()) {
 				a.setName(user.getName());
 				a.setBirthday(user.getBirthday());
 				a.setLogin(user.getLogin());
