@@ -37,7 +37,7 @@ public class TestFilm {
 	}
 
 	@Test
-	public void TestGet() throws Exception {
+	public void testGet() throws Exception {
 		mockMvc.perform(get("/film"))
 				.andDo(print())
 				.andExpect(status().isOk())
@@ -45,11 +45,11 @@ public class TestFilm {
 	}
 
 	@Test
-	public void TestPostNewFilm() throws Exception {
+	public void testPostNewFilm() throws Exception {
 		Film film = new Film("StarWars", "interesting film",
 				LocalDate.of(2018, 11, 18), 110);
 		mockMvc.perform(post("/film")
-						.content(JsonToString(film))
+						.content(jsonToString(film))
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))
 				.andDo(print())
@@ -57,11 +57,11 @@ public class TestFilm {
 	}
 
 	@Test
-	public void TestPostVerifyName() throws Exception {
+	public void testPostVerifyName() throws Exception {
 		Film film = new Film(" ", "a comedy",
 				LocalDate.of(2005, 5, 2), 100);
 		mockMvc.perform(post("/film")
-						.content(JsonToString(film))
+						.content(jsonToString(film))
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))
 				.andDo(print())
@@ -69,7 +69,7 @@ public class TestFilm {
 	}
 
 	@Test
-	public void TestPostVerifyMaxDescription() throws Exception {
+	public void testPostVerifyMaxDescription() throws Exception {
 		Film film = new Film("Интерстеллар", "Когда засуха, пыльные бури и вымирание растений " +
 				"приводят человечество к продовольственному кризису,\n" + "коллектив исследователей и учёных " +
 				"отправляется сквозь червоточину (которая предположительно соединяет области" +
@@ -78,7 +78,7 @@ public class TestFilm {
 				"и найти планету с подходящими для человечества условиями.",
 				LocalDate.of(2014, 9, 15), 169);
 		mockMvc.perform(post("/film")
-						.content(JsonToString(film))
+						.content(jsonToString(film))
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().is(400));
@@ -90,7 +90,7 @@ public class TestFilm {
 				" в семье сапожников и тайно мечтает стать музыкантом. ",
 				LocalDate.of(1895, 12, 27), 117);
 		mockMvc.perform(post("/film")
-						.content(JsonToString(film))
+						.content(jsonToString(film))
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))
 				.andDo(print())
@@ -103,14 +103,14 @@ public class TestFilm {
 				" в семье сапожников и тайно мечтает стать музыкантом. ",
 				LocalDate.of(2017, 8, 15), -117);
 		mockMvc.perform(post("/film")
-						.content(JsonToString(film))
+						.content(jsonToString(film))
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))
 				.andDo(print())
 				.andExpect(status().is(400));
 	}
 
-	public static String JsonToString(final Object obj) {
+	public static String jsonToString(final Object obj) {
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
 			objectMapper.registerModule((new JavaTimeModule()));

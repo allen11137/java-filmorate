@@ -49,7 +49,7 @@ public class TestUser {
 		User user = new User("lilia@yandex.ru", "Lilia", "Alisa",
 				LocalDate.of(1900, 5, 15));
 		mockMvc.perform(post("/user")
-						.content(JsonToString(user))
+						.content(jsonToString(user))
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))
 				.andDo(print())
@@ -61,7 +61,7 @@ public class TestUser {
 		User user = new User("svetasveta.com", "Waza", "Alisa",
 				LocalDate.of(1921, 2, 20));
 		mockMvc.perform(post("/user")
-						.content(JsonToString(user))
+						.content(jsonToString(user))
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))
 				.andDo(print())
@@ -73,7 +73,7 @@ public class TestUser {
 		User user = new User("alina@yandex.ru", "", "Alina",
 				LocalDate.of(1990, 3, 1));
 		mockMvc.perform(post("/user")
-						.content(JsonToString(user))
+						.content(jsonToString(user))
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))
 				.andDo(print())
@@ -85,7 +85,7 @@ public class TestUser {
 		User user = new User("alina@yandex.ru", "allen", " ",
 				LocalDate.of(1990, 2, 15));
 		mockMvc.perform(post("/user")
-						.content(JsonToString(user))
+						.content(jsonToString(user))
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))
 				.andDo(print())
@@ -97,14 +97,14 @@ public class TestUser {
 		User user = new User("alina@yandex.ru", "allen", " ",
 				LocalDate.of(3000, 5, 1));
 		mockMvc.perform(post("/user")
-						.content(JsonToString(user))
+						.content(jsonToString(user))
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))
 				.andDo(print())
 				.andExpect(status().is(400));
 	}
 
-	public static String JsonToString(final Object obj) {
+	public static String jsonToString(final Object obj) {
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
 			objectMapper.registerModule((new JavaTimeModule()));
