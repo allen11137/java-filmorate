@@ -31,9 +31,8 @@ public class ServiceFilm {
 		}
 	}
 
-
 	public void updateOptionsOfFilm(Film film) {
-		amountOfFilm.forEach(a -> {
+		amountOfFilm.forEach(a ->{
 			if (a.getId() == film.getId()) {
 				a.setName(film.getName());
 				a.setDescription(film.getDescription());
