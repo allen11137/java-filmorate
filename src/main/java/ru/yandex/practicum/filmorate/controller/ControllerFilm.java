@@ -31,7 +31,7 @@ public class ControllerFilm {
     }
 
     @PostMapping
-    public ResponseEntity<Film> makeFilm (@Valid @RequestBody Film film) throws ValidationException, AlreadyObjectExistsException {
+    public ResponseEntity<Film> makeFilm(@Valid @RequestBody Film film) throws ValidationException, AlreadyObjectExistsException {
         if (!serviceFilm.amountOfFilm.contains(film)) {
             log.info("Фильм добавлен", film, serviceFilm.amountOfFilm.size());
             serviceFilm.addToFilm(serviceFilm.verifyParametrOfFilm(film));
@@ -42,7 +42,6 @@ public class ControllerFilm {
     }
     @PutMapping
     public ResponseEntity<Film> filmUpdate(@Valid @RequestBody Film film) throws ValidationException, NotFoundException {
-
         if (serviceFilm.verifyOptionsOfFilm(film)) {
             log.info("Фильм обновлён: {}", film);
             serviceFilm.updateOptionsOfFilm(film);
