@@ -1,9 +1,9 @@
 package ru.yandex.practicum.filmorate.model;
 
-import jakarta.validation.constraints.Min;
 import lombok.Data;
-import jakarta.validation.constraints.Email;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
 import java.time.LocalDate;
 
 

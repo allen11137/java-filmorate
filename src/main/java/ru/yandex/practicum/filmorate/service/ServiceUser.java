@@ -7,11 +7,12 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 public class ServiceUser {
-	public final HashSet<User> amountOfUsers = new HashSet<>();
+	public final Set<User> amountOfUsers = new HashSet<>();
 	public final AtomicInteger idOfUser = new AtomicInteger();
 
 	public User verifyOptionsOfUser(User user) throws ValidationException {
@@ -37,14 +38,14 @@ public class ServiceUser {
 				a.setLogin(user.getLogin());
 				a.setEmail(user.getEmail());
 			}
-			log.info("Информация о user обновлена: {}", user.getName(), user);
+			log.info("Информация о user обновлена: {}", user);
 		});
 	}
 
 	public void appendUser(User user) {
 		idOfUser.getAndIncrement();
 		user.setId(idOfUser.get());
-		log.info("User добавлен", user);
+		log.info("User добавлен: {}", user);
 		amountOfUsers.add(user);
 	}
 

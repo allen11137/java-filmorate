@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -12,6 +11,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.ServiceUser;
 import ru.yandex.practicum.filmorate.exception.AlreadyObjectExistsException;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,8 +48,5 @@ public class ControllerUser {
 		} else {
 			throw new NotFoundException("Пользователь не найден с id: " + user.getId());
 		}
-
 	}
-
-
 }
