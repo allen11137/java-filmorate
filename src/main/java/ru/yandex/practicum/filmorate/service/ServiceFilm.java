@@ -32,15 +32,17 @@ public class ServiceFilm {
 	}
 
 	public void updateOptionsOfFilm(Film film) {
-		amountOfFilm.forEach(a ->{
-			if (a.getId() == film.getId()) {
-				a.setName(film.getName());
-				a.setDescription(film.getDescription());
-				a.setReleaseDate(film.getReleaseDate());
-				a.setDuration(film.getDuration());
-			}
-			log.info("База данных обновлена: {}", film);
-		});
+		amountOfFilm.forEach(a -> updateFilm(film, a));
+	}
+
+	private static void updateFilm(Film film, Film a) {
+		if (a.getId() == film.getId()) {
+			a.setName(film.getName());
+			a.setDescription(film.getDescription());
+			a.setReleaseDate(film.getReleaseDate());
+			a.setDuration(film.getDuration());
+		log.info("База данных обновлена: {}", film);
+		}
 	}
 
 	public void addToFilm(Film film) {
