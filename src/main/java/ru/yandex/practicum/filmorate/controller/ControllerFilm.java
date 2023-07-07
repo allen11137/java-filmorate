@@ -22,37 +22,35 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ControllerFilm {
 
-    ServiceFilm serviceFilm;
+	ServiceFilm serviceFilm;
 
-    @GetMapping
-    public List<Film> getListOfFilms() {
-        log.info("Список фильмов: {}", serviceFilm.amountOfFilm.size());
-        return new ArrayList<>(serviceFilm.amountOfFilm);
-    }
+	@GetMapping
+	public List<Film> getListOfFilms() {
+		log.info("Список фильмов: {}", serviceFilm.amountOfFilm.size());
+		return new ArrayList<>(serviceFilm.amountOfFilm);
+	}
 
-    @PostMapping
-    public ResponseEntity<Film> makeFilm(@Valid @RequestBody Film film) throws ValidationException, AlreadyObjectExistsException {
-        if (!serviceFilm.amountOfFilm.contains(film)) {
-            log.info("Фильм добавлен", film, serviceFilm.amountOfFilm.size());
-            serviceFilm.addToFilm(serviceFilm.verifyParametrOfFilm(film));
-            return ResponseEntity.status(HttpStatus.OK).body(film);
-        } else {
-            throw new AlreadyObjectExistsException("Фильм уже в списке");
-        }
-    }
-    @PutMapping
-    public ResponseEntity<Film> filmUpdate(@Valid @RequestBody Film film) throws ValidationException, NotFoundException {
-        if (serviceFilm.verifyOptionsOfFilm(film)) {
-            log.info("Фильм обновлён: {}", film);
-            serviceFilm.updateOptionsOfFilm(film);
-            return ResponseEntity.status(HttpStatus.OK).body(film);
-        } else {
-            throw new NotFoundException("Фильм не найден" + film.getId());
-        }
-    }
+	@PostMapping
+	public ResponseEntity<Film> makeFilm(@Valid @RequestBody Film film) throws ValidationException, AlreadyObjectExistsException {
+		if (!serviceFilm.amountOfFilm.contains(film)) {
+			log.info("Фильм добавлен", film, serviceFilm.amountOfFilm.size());
+			serviceFilm.addToFilm(serviceFilm.verifyParametrOfFilm(film));
+			return ResponseEntity.status(HttpStatus.OK).body(film);
+		} else {
+			throw new AlreadyObjectExistsException("Фильм уже в списке");
+		}
+	}
 
-
-
+	@PutMapping
+	public ResponseEntity<Film> filmUpdate(@Valid @RequestBody Film film) throws ValidationException, NotFoundException {
+		if (serviceFilm.verifyOptionsOfFilm(film)) {
+			log.info("Фильм обновлён: {}", film);
+			serviceFilm.updateOptionsOfFilm(film);
+			return ResponseEntity.status(HttpStatus.OK).body(film);
+		} else {
+			throw new NotFoundException("Фильм не найден" + film.getId());
+		}
+	}
 
 
 }

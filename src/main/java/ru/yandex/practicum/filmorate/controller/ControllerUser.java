@@ -20,37 +20,36 @@ import java.util.List;
 @RequestMapping("/user")
 @RequiredArgsConstructor
 public class ControllerUser {
-    ServiceUser serviceUser;
+	ServiceUser serviceUser;
 
-    @GetMapping
-    public List<User> getListOfUser(){
-        log.info("Список пользователей: {}",serviceUser.amountOfUsers.size() );
-        return new ArrayList<>(serviceUser.amountOfUsers);
-    }
+	@GetMapping
+	public List<User> getListOfUser() {
+		log.info("Список пользователей: {}", serviceUser.amountOfUsers.size());
+		return new ArrayList<>(serviceUser.amountOfUsers);
+	}
 
-    @PostMapping
-    ResponseEntity<User> makeUser(@Valid @RequestBody User user) throws AlreadyObjectExistsException, ValidationException {
-        if (!serviceUser.amountOfUsers.contains(user)) {
-            log.info("Пользователь добавлен: {}", user);
-            serviceUser.appendUser(serviceUser.verifyOptionsOfUser(user));
-            return ResponseEntity.status(HttpStatus.OK).body(user);
-        } else {
-            throw new AlreadyObjectExistsException("Пользователь уже был добавлен");
-        }
-    }
+	@PostMapping
+	ResponseEntity<User> makeUser(@Valid @RequestBody User user) throws AlreadyObjectExistsException, ValidationException {
+		if (!serviceUser.amountOfUsers.contains(user)) {
+			log.info("Пользователь добавлен: {}", user);
+			serviceUser.appendUser(serviceUser.verifyOptionsOfUser(user));
+			return ResponseEntity.status(HttpStatus.OK).body(user);
+		} else {
+			throw new AlreadyObjectExistsException("Пользователь уже был добавлен");
+		}
+	}
 
-    @PutMapping
-    ResponseEntity<User> userUpdate(@Valid @RequestBody User user) throws NotFoundException, ValidationException {
-        if (serviceUser.checkAppendOfUsers(user)) {
-            log.info("Информация обновлена: {}", user);
-            serviceUser.renewInfoOfUser(serviceUser.verifyOptionsOfUser(user));
-            return ResponseEntity.status(HttpStatus.OK).body(user);
-        } else {
-            throw new NotFoundException("Пользователь не найден с id: " + user.getId());
-        }
+	@PutMapping
+	ResponseEntity<User> userUpdate(@Valid @RequestBody User user) throws NotFoundException, ValidationException {
+		if (serviceUser.checkAppendOfUsers(user)) {
+			log.info("Информация обновлена: {}", user);
+			serviceUser.renewInfoOfUser(serviceUser.verifyOptionsOfUser(user));
+			return ResponseEntity.status(HttpStatus.OK).body(user);
+		} else {
+			throw new NotFoundException("Пользователь не найден с id: " + user.getId());
+		}
 
-    }
-
+	}
 
 
 }
