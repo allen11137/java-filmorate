@@ -7,6 +7,5 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class AlreadyObjectExistsException extends RuntimeException {
 	public AlreadyObjectExistsException(String message) {
 		super(message);
-
 	}
 }
