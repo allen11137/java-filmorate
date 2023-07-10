@@ -17,10 +17,10 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class ControllerUser {
-	ServiceUser serviceUser;
+	private final ServiceUser serviceUser;
 
 	@GetMapping
 	public List<User> getListOfUser() {
@@ -32,16 +32,16 @@ public class ControllerUser {
 	ResponseEntity<User> makeUser(@Valid @RequestBody User user) throws AlreadyObjectExistsException, ValidationException {
 		if (!serviceUser.amountOfUsers.contains(user)) {
 			log.info("Пользователь добавлен: {}", user);
-			serviceUser.appendUser(serviceUser.verifyOptionsOfUser(user));
+			serviceUser.addUser(serviceUser.verifyOptionsOfUser(user));
 			return ResponseEntity.status(HttpStatus.OK).body(user);
 		} else {
-			throw new AlreadyObjectExistsException("Пользователь уже был добавлен");
+			throw new AlreadyObjectExistsException("Пользователь уже был добавлен" + user.getEmail());
 		}
 	}
 
 	@PutMapping
 	ResponseEntity<User> userUpdate(@Valid @RequestBody User user) throws NotFoundException, ValidationException {
-		if (serviceUser.checkAppendOfUsers(user)) {
+		if (serviceUser.checkAddOfUsers(user)) {
 			log.info("Информация обновлена: {}", user);
 			serviceUser.renewInfoOfUser(serviceUser.verifyOptionsOfUser(user));
 			return ResponseEntity.status(HttpStatus.OK).body(user);

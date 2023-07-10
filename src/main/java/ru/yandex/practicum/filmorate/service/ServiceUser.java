@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -11,6 +12,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
+@Service
 public class ServiceUser {
 	public final Set<User> amountOfUsers = new HashSet<>();
 	public final AtomicInteger idOfUser = new AtomicInteger();
@@ -22,9 +24,6 @@ public class ServiceUser {
 			throw new ValidationException("Неправильный адрес электронной почты");
 		} else if (user.getBirthday().isAfter(LocalDate.now())) {
 			throw new ValidationException("Неправильная дата рождения");
-		} else if (user.getName().isBlank() || user.getName() == null) {
-			user.setName(user.getLogin());
-			return user;
 		} else {
 			return user;
 		}
@@ -42,14 +41,17 @@ public class ServiceUser {
 		});
 	}
 
-	public void appendUser(User user) {
+	public void addUser(User user) {
 		idOfUser.getAndIncrement();
 		user.setId(idOfUser.get());
 		log.info("User добавлен: {}", user);
+		if (user.getName() == null || user.getName().isBlank()) {
+			user.setName(user.getLogin());
+		}
 		amountOfUsers.add(user);
 	}
 
-	public boolean checkAppendOfUsers(User user) {
+	public boolean checkAddOfUsers(User user) {
 		return amountOfUsers.stream().anyMatch(a -> a.getId() == user.getId());
 	}
 

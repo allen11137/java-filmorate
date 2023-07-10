@@ -18,11 +18,11 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/film")
+@RequestMapping("/films")
 @RequiredArgsConstructor
 public class ControllerFilm {
 
-	ServiceFilm serviceFilm;
+	private final ServiceFilm serviceFilm;
 
 	@GetMapping
 	public List<Film> getListOfFilms() {
