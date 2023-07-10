@@ -15,7 +15,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 public class ServiceUser {
 	public final Set<User> amountOfUsers = new HashSet<>();
-	public final AtomicInteger idOfUser = new AtomicInteger();
+	public static final AtomicInteger idOfUser = new AtomicInteger();
+
+	static {
+		idOfUser.set(1);
+	}
 
 	public User verifyOptionsOfUser(User user) throws ValidationException {
 		if (user.getLogin().isBlank()) {
@@ -42,8 +46,8 @@ public class ServiceUser {
 	}
 
 	public void addUser(User user) {
-		idOfUser.getAndIncrement();
-		user.setId(idOfUser.get());
+		int andIncrement = idOfUser.getAndIncrement();
+		user.setId(andIncrement);
 		log.info("User добавлен: {}", user);
 		if (user.getName() == null || user.getName().isBlank()) {
 			user.setName(user.getLogin());

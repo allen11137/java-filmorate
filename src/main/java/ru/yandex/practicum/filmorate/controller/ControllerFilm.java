@@ -26,14 +26,13 @@ public class ControllerFilm {
 
 	@GetMapping
 	public List<Film> getListOfFilms() {
-		log.info("Список фильмов: {}", serviceFilm.amountOfFilm.size());
+		log.info("Список фильмов: {}", serviceFilm.amountOfFilm);
 		return new ArrayList<>(serviceFilm.amountOfFilm);
 	}
 
 	@PostMapping
 	public ResponseEntity<Film> makeFilm(@Valid @RequestBody Film film) throws ValidationException, AlreadyObjectExistsException {
 		if (!serviceFilm.amountOfFilm.contains(film)) {
-			log.info("Фильм добавлен", film, serviceFilm.amountOfFilm.size());
 			serviceFilm.addToFilm(serviceFilm.verifyParametrOfFilm(film));
 			return ResponseEntity.status(HttpStatus.OK).body(film);
 		} else {

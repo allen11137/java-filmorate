@@ -16,12 +16,16 @@ public class ServiceFilm {
 	public static final LocalDate FIRST_DATE_OF_RELEASE = LocalDate.of(1895, 12, 28);
 	public static final int SIZE_OF_DESCRIPTION = 200;
 
-	public final AtomicInteger filmId = new AtomicInteger();
+	public static final AtomicInteger filmId = new AtomicInteger();
 	public final Set<Film> amountOfFilm = new HashSet<>();
+
+	static {
+		filmId.set(1);
+	}
 
 	public Film verifyParametrOfFilm(Film film) throws ValidationException {
 		if (film.getName() == null || film.getName().isBlank()) {
-			throw new ValidationException("Неправильное имя файла");
+			throw new ValidationException("Имя не должно быть пустым");
 		} else if (film.getDescription().length() > SIZE_OF_DESCRIPTION) {
 			throw new ValidationException("Слишком длинное описание, максимальное количество символов 200");
 		} else if (film.getReleaseDate().isBefore(FIRST_DATE_OF_RELEASE)) {
@@ -48,8 +52,8 @@ public class ServiceFilm {
 	}
 
 	public void addToFilm(Film film) {
-		filmId.getAndIncrement();
-		film.setId(filmId.get());
+		int andIncrement = filmId.getAndIncrement();
+		film.setId(andIncrement);
 		log.info("Фильм добавлен: {}", film);
 		amountOfFilm.add(film);
 	}

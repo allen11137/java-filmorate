@@ -38,7 +38,7 @@ public class TestUser {
 
 	@Test
 	public void getTest() throws Exception {
-		mockMvc.perform(get("/user"))
+		mockMvc.perform(get("/users"))
 				.andDo(print())
 				.andExpect(status().isOk())
 				.andExpect(content().contentType("application/json"));
@@ -48,7 +48,7 @@ public class TestUser {
 	public void postTestAddUser() throws Exception {
 		User user = new User("lilia@yandex.ru", "Lilia", "Alisa",
 				LocalDate.of(1900, 5, 15));
-		mockMvc.perform(post("/user")
+		mockMvc.perform(post("/users")
 						.content(jsonToString(user))
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))
@@ -60,7 +60,7 @@ public class TestUser {
 	public void postTestVerifyEmail() throws Exception {
 		User user = new User("svetasveta.com", "Waza", "Alisa",
 				LocalDate.of(1921, 2, 20));
-		mockMvc.perform(post("/user")
+		mockMvc.perform(post("/users")
 						.content(jsonToString(user))
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))
@@ -72,7 +72,7 @@ public class TestUser {
 	public void postTestVerifyLogin() throws Exception {
 		User user = new User("alina@yandex.ru", "", "Alina",
 				LocalDate.of(1990, 3, 1));
-		mockMvc.perform(post("/user")
+		mockMvc.perform(post("/users")
 						.content(jsonToString(user))
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))
@@ -84,7 +84,7 @@ public class TestUser {
 	public void postTestVerifyName() throws Exception {
 		User user = new User("alina@yandex.ru", "allen", " ",
 				LocalDate.of(1990, 2, 15));
-		mockMvc.perform(post("/user")
+		mockMvc.perform(post("/users")
 						.content(jsonToString(user))
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))
@@ -96,7 +96,7 @@ public class TestUser {
 	public void postTestVerifyBirthday() throws Exception {
 		User user = new User("alina@yandex.ru", "allen", " ",
 				LocalDate.of(3000, 5, 1));
-		mockMvc.perform(post("/user")
+		mockMvc.perform(post("/users")
 						.content(jsonToString(user))
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))

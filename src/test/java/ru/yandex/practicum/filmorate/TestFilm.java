@@ -38,7 +38,7 @@ public class TestFilm {
 
 	@Test
 	public void testGet() throws Exception {
-		mockMvc.perform(get("/film"))
+		mockMvc.perform(get("/films"))
 				.andDo(print())
 				.andExpect(status().isOk())
 				.andExpect(content().contentType("application/json"));
@@ -48,7 +48,7 @@ public class TestFilm {
 	public void testPostNewFilm() throws Exception {
 		Film film = new Film("StarWars", "interesting film",
 				LocalDate.of(2018, 11, 18), 110);
-		mockMvc.perform(post("/film")
+		mockMvc.perform(post("/films")
 						.content(jsonToString(film))
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))
@@ -60,7 +60,7 @@ public class TestFilm {
 	public void testPostVerifyName() throws Exception {
 		Film film = new Film(" ", "a comedy",
 				LocalDate.of(2005, 5, 2), 100);
-		mockMvc.perform(post("/film")
+		mockMvc.perform(post("/films")
 						.content(jsonToString(film))
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))
@@ -77,7 +77,7 @@ public class TestFilm {
 				"чтобы превзойти прежние ограничения для космических путешествий человека " +
 				"и найти планету с подходящими для человечества условиями.",
 				LocalDate.of(2014, 9, 15), 169);
-		mockMvc.perform(post("/film")
+		mockMvc.perform(post("/films")
 						.content(jsonToString(film))
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))
@@ -89,7 +89,7 @@ public class TestFilm {
 		Film film = new Film("Тайна Коко", "12-летний Мигель живёт в мексиканской деревушке" +
 				" в семье сапожников и тайно мечтает стать музыкантом. ",
 				LocalDate.of(1895, 12, 27), 117);
-		mockMvc.perform(post("/film")
+		mockMvc.perform(post("/films")
 						.content(jsonToString(film))
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))
@@ -102,7 +102,7 @@ public class TestFilm {
 		Film film = new Film("Тайна Коко", "12-летний Мигель живёт в мексиканской деревушке" +
 				" в семье сапожников и тайно мечтает стать музыкантом. ",
 				LocalDate.of(2017, 8, 15), -117);
-		mockMvc.perform(post("/film")
+		mockMvc.perform(post("/films")
 						.content(jsonToString(film))
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))

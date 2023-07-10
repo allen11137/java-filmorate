@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
 import lombok.NonNull;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
@@ -15,7 +16,7 @@ public class Film {
 	private String name;
 
 	@NonNull
-	@Size(max = 200)
+	@Size(min = 1, max = 200)
 	private String description;
 
 	@NonNull
