@@ -12,26 +12,26 @@ import java.time.LocalDate;
 @Data
 public class Film {
 
-    private int id;
+	private int id;
 
-    @NotBlank
-    private String name;
+	@NotBlank
+	private String name;
 
-    @NonNull
-    @Size(max = 200)
-    private String description;
+	@NonNull
+	@Size(max = 200)
+	private String description;
 
-    @NonNull
-    private LocalDate releaseDate;
+	@NonNull
+	private LocalDate releaseDate;
 
-    @NonNull
-    private long duration;
+	@NonNull
+	private long duration;
 
-    public Film(String name, String description, LocalDate releaseDate, long duration) {
-        this.name = name;
-        this.description = description;
-        this.releaseDate = releaseDate;
-        this.duration = duration;
+	public Film(String name, String description, LocalDate releaseDate, long duration) {
+		this.name = name;
+		this.description = description;
+		this.releaseDate = releaseDate;
+		this.duration = duration;
 
-    }
+	}
 }

@@ -43,7 +43,7 @@ public class ServiceFilm {
 			a.setDescription(film.getDescription());
 			a.setReleaseDate(film.getReleaseDate());
 			a.setDuration(film.getDuration());
-		log.info("База данных обновлена: {}", film);
+			log.info("База данных обновлена: {}", film);
 		}
 	}
 
