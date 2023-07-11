@@ -19,9 +19,9 @@ public class ServiceFilm {
 	public static final AtomicInteger filmId = new AtomicInteger();
 	public final Set<Film> amountOfFilm = new HashSet<>();
 
-	static {
-		filmId.set(1);
-	}
+//	static {
+//		filmId.set(1);
+//	}
 
 	public Film verifyParametrOfFilm(Film film) throws ValidationException {
 		if (film.getName() == null || film.getName().isBlank()) {
