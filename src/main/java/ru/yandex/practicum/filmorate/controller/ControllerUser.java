@@ -31,7 +31,6 @@ public class ControllerUser {
 	@PostMapping
 	ResponseEntity<User> makeUser(@Valid @RequestBody User user) throws AlreadyObjectExistsException, ValidationException {
 		if (!serviceUser.amountOfUsers.contains(user)) {
-			log.info("Пользователь добавлен: {}", user);
 			serviceUser.addUser(serviceUser.verifyOptionsOfUser(user));
 			return ResponseEntity.status(HttpStatus.OK).body(user);
 		} else {
@@ -42,7 +41,6 @@ public class ControllerUser {
 	@PutMapping
 	ResponseEntity<User> userUpdate(@Valid @RequestBody User user) throws NotFoundException, ValidationException {
 		if (serviceUser.checkAddOfUsers(user)) {
-			log.info("Информация обновлена: {}", user);
 			serviceUser.renewInfoOfUser(serviceUser.verifyOptionsOfUser(user));
 			return ResponseEntity.status(HttpStatus.OK).body(user);
 		} else {

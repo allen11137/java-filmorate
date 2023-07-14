@@ -22,13 +22,16 @@ public class ServiceUser {
 	}
 
 	public User verifyOptionsOfUser(User user) throws ValidationException {
-		if (user.getLogin().isBlank()) {
+		if (user.getLogin() == null || user.getLogin().isBlank()) {
 			throw new ValidationException("Неправильное имя User");
 		} else if (user.getEmail().isBlank() || !EmailValidator.getInstance().isValid(user.getEmail())) {
 			throw new ValidationException("Неправильный адрес электронной почты");
 		} else if (user.getBirthday().isAfter(LocalDate.now())) {
 			throw new ValidationException("Неправильная дата рождения");
 		} else {
+			if (user.getName() == null || user.getName().isBlank()) {
+				user.setName(user.getLogin());
+			}
 			return user;
 		}
 	}
@@ -49,9 +52,6 @@ public class ServiceUser {
 		int andIncrement = idOfUser.getAndIncrement();
 		user.setId(andIncrement);
 		log.info("User добавлен: {}", user);
-		if (user.getName() == null || user.getName().isBlank()) {
-			user.setName(user.getLogin());
-		}
 		amountOfUsers.add(user);
 	}
 

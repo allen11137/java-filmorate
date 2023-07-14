@@ -30,7 +30,7 @@ public class ServiceFilm {
 			throw new ValidationException("Слишком длинное описание, максимальное количество символов 200");
 		} else if (film.getReleaseDate().isBefore(FIRST_DATE_OF_RELEASE)) {
 			throw new ValidationException("Неправильная дата релиза фильма.");
-		} else if (film.getDuration() < 0) {
+		} else if (film.getDuration() < 1) {
 			throw new ValidationException("Неправильная длительность фильма");
 		} else {
 			return film;
@@ -54,8 +54,8 @@ public class ServiceFilm {
 	public void addToFilm(Film film) {
 		int andIncrement = filmId.getAndIncrement();
 		film.setId(andIncrement);
-		log.info("Фильм добавлен: {}", film);
 		amountOfFilm.add(film);
+		log.info("Фильм добавлен: {}", film);
 	}
 
 	public boolean verifyOptionsOfFilm(Film film) {

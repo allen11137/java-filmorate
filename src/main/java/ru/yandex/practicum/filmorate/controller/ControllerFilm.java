@@ -43,8 +43,8 @@ public class ControllerFilm {
 	@PutMapping
 	public ResponseEntity<Film> filmUpdate(@Valid @RequestBody Film film) throws ValidationException, NotFoundException {
 		if (serviceFilm.verifyOptionsOfFilm(film)) {
-			log.info("Фильм обновлён: {}", film);
 			serviceFilm.updateOptionsOfFilm(film);
+			log.info("Фильм обновлён: {}", film);
 			return ResponseEntity.status(HttpStatus.OK).body(film);
 		} else {
 			throw new NotFoundException("Фильм не найден" + film.getId());
