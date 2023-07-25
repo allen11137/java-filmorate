@@ -36,8 +36,8 @@ public class ControllerFilm {
 	}
 
 	@PutMapping
-	public ResponseEntity<Film> filmUpdate(@Valid @RequestBody Film film, Film a) {
-		serviceFilm.updateFilm(film, a);
+	public ResponseEntity<Film> filmUpdate(@Valid @RequestBody Film film) {
+		serviceFilm.updateFilm(film);
 		return ResponseEntity.status(HttpStatus.OK).body(film);
 	}
 
@@ -48,14 +48,14 @@ public class ControllerFilm {
 
 
 	@PutMapping("/{id}/like/{userId}")
-	public ResponseEntity<Film> favouriteFilms(@PathVariable long filmId, @PathVariable long idOfUser) {
-		return ResponseEntity.status(HttpStatus.OK).body(serviceFilm.joinLikeToFilm(filmId, idOfUser));
+	public ResponseEntity<Film> favouriteFilms(@PathVariable long id, @PathVariable long userId) {
+		return ResponseEntity.status(HttpStatus.OK).body(serviceFilm.joinLikeToFilm(id, userId));
 	}
 
 
 	@DeleteMapping("/{id}/like/{userId}")
-	public ResponseEntity<Film> deleteLikeInFilm(@PathVariable long filmId, @PathVariable long idOfUser) {
-		return ResponseEntity.status(HttpStatus.OK).body(serviceFilm.deleteToLike(filmId, idOfUser));
+	public ResponseEntity<Film> deleteLikeInFilm(@PathVariable long id, @PathVariable long userId) {
+		return ResponseEntity.status(HttpStatus.OK).body(serviceFilm.deleteToLike(id, userId));
 	}
 
 	@GetMapping("/popular")

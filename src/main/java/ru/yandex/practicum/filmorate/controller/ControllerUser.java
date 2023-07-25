@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.ServiceUser;
 
@@ -34,7 +36,7 @@ public class ControllerUser {
 	}
 
 	@PutMapping
-	ResponseEntity<User> userUpdate(@Valid @RequestBody User user) {
+	ResponseEntity<User> userUpdate(@Valid @RequestBody User user) throws NotFoundException, ValidationException {
 		serviceUser.renewInfoOfUser(user);
 		return ResponseEntity.status(HttpStatus.OK).body(user);
 	}
@@ -49,9 +51,9 @@ public class ControllerUser {
 		return ResponseEntity.status(HttpStatus.OK).body(serviceUser.deleteFromFriends(id, friendId));
 	}
 
-	@GetMapping("/{idOfUser}")
-	ResponseEntity<User> getUser(@PathVariable long idOfUser) {
-		return ResponseEntity.status(HttpStatus.OK).body(serviceUser.getOfUser(idOfUser));
+	@GetMapping("/{id}")
+	ResponseEntity<User> getUser(@PathVariable long id) {
+		return ResponseEntity.status(HttpStatus.OK).body(serviceUser.getOfUser(id));
 	}
 
 	@GetMapping("/{id}/friends")
