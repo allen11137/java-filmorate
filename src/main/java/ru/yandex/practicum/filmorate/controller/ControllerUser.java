@@ -5,12 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.ServiceUser;
+import ru.yandex.practicum.filmorate.exception.AlreadyObjectExistsException;
+import ru.yandex.practicum.filmorate.storage.User.InMemoryUserStorage;
 
+import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -20,46 +23,47 @@ import java.util.List;
 public class ControllerUser {
 	private final ServiceUser serviceUser;
 
+
 	@GetMapping
 	public List<User> getListOfUser() {
-		log.info("Пользователи: {}", serviceUser.getUsers().size());
-		return serviceUser.getUsers();
+		log.info("Число пользователей: {}", serviceUser.getListOfUser().size());
+		return serviceUser.getListOfUser();
 	}
 
 	@PostMapping
-	ResponseEntity<User> makeUser(@RequestBody User user) {
-		serviceUser.addUser(user);
+	ResponseEntity<User> makeUser(@Valid @RequestBody User user) {
+		serviceUser.addUser(serviceUser.verifyOptionsOfUser(user));
 		return ResponseEntity.status(HttpStatus.OK).body(user);
 	}
 
 	@PutMapping
-	ResponseEntity<User> userUpdate(@RequestBody User user) throws NotFoundException, ValidationException {
+	ResponseEntity<User> userUpdate(@Valid @RequestBody User user) {
 		serviceUser.renewInfoOfUser(user);
 		return ResponseEntity.status(HttpStatus.OK).body(user);
 	}
 
 	@PutMapping("/{id}/friends/{friendId}")
-	ResponseEntity<User> joinToFriend(@PathVariable int id, @PathVariable int friendId) {
+	ResponseEntity<User> joinToFriend(@PathVariable long id, @PathVariable long friendId) {
 		return ResponseEntity.status(HttpStatus.OK).body(serviceUser.userFriends(id, friendId));
 	}
 
 	@DeleteMapping("/{id}/friends/{friendId}")
-	ResponseEntity<User> removeFromFriends(@PathVariable int id, @PathVariable int friendId) {
+	ResponseEntity<User> removeFromFriends(@PathVariable long id, @PathVariable long friendId) {
 		return ResponseEntity.status(HttpStatus.OK).body(serviceUser.deleteFromFriends(id, friendId));
 	}
 
-	@GetMapping("/{id}")
-	ResponseEntity<User> getUser(@PathVariable int id) {
-		return ResponseEntity.status(HttpStatus.OK).body(serviceUser.getOfUser(id));
+	@GetMapping("/{idOfUser}")
+	ResponseEntity<User> getUser(@PathVariable long idOfUser) {
+		return ResponseEntity.status(HttpStatus.OK).body(serviceUser.getOfUser(idOfUser));
 	}
 
 	@GetMapping("/{id}/friends")
-	ResponseEntity<List<User>> getListFriends(@PathVariable int id) {
+	ResponseEntity<List<User>> getListFriends(@PathVariable long id) {
 		return ResponseEntity.status(HttpStatus.OK).body(serviceUser.amountOfFriends(id));
 	}
 
 	@GetMapping("/{id}/friends/common/{otherId}")
-	ResponseEntity<List<User>> getListFriends(@PathVariable int id, @PathVariable int otherId) {
+	ResponseEntity<List<User>> getListFriends(@PathVariable long id, @PathVariable long otherId) {
 		return ResponseEntity.status(HttpStatus.OK).body(serviceUser.mainFriends(id, otherId));
 	}
 }

@@ -3,40 +3,44 @@ package ru.yandex.practicum.filmorate.storage.User;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
-    public Map<Integer, User> amountOfUsers = new HashMap<>();
-    public static final AtomicInteger idOfUser = new AtomicInteger();
 
-    static {
-        idOfUser.set(1);
-    }
 
-    @Override
-    public void addUser(User user) {
-        int id = idOfUser.getAndIncrement();
-        user.setId(id);
-        amountOfUsers.put(id, user);
-    }
+	public final Set<User> amountOfUsers = new HashSet<>();
+	public static final AtomicInteger idOfUser = new AtomicInteger();
 
-    @Override
-    public void renewInfoOfUser(User user) {
-        User updatedUser = amountOfUsers.get(user.getId());
-        updatedUser.setName(user.getName() != null ? user.getName() : updatedUser.getName());
-        updatedUser.setBirthday(user.getBirthday() != null ? user.getBirthday() : updatedUser.getBirthday());
-        updatedUser.setLogin(user.getLogin() != null ? user.getLogin() : updatedUser.getLogin());
-        updatedUser.setEmail(user.getEmail() != null ? user.getEmail() : updatedUser.getEmail());
-    }
+	@Override
+	public void addUser(User user) {
+		int andIncrement = idOfUser.getAndIncrement();
+		user.setId(andIncrement);
+		amountOfUsers.add(user);
+	}
 
-    @Override
-    public void deleteToUser(User user) {
-        amountOfUsers.remove(user.getId());
-    }
+	@Override
+	public void renewInfoOfUser(User user) {
+		amountOfUsers.forEach(a -> {
+			if (a.getId() == user.getId()) {
+				a.setName(user.getName());
+				a.setBirthday(user.getBirthday());
+				a.setLogin(user.getLogin());
+				a.setEmail(user.getEmail());
+			}
+		});
+	}
 
-    public Map<Integer, User> getUsers() {
-        return amountOfUsers;
-    }
+	@Override
+	public void deleteToUser(User user) {
+		amountOfUsers.remove(user);
+	}
+
+	public List<User> getUsers() {
+		return new ArrayList<>(amountOfUsers);
+	}
 }

@@ -3,15 +3,15 @@ package ru.yandex.practicum.filmorate.storage.Film;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
 
 	public static final AtomicInteger filmId = new AtomicInteger();
-	public final Map<Integer, Film> amountOfFilm = new HashMap<>();
+	public final Set<Film> amountOfFilm = new HashSet<>();
 
 	static {
 		filmId.set(1);
@@ -19,27 +19,29 @@ public class InMemoryFilmStorage implements FilmStorage {
 
 	@Override
 	public void addToFilm(Film film) {
-		int id = filmId.getAndIncrement();
-		film.setId(id);
-		amountOfFilm.put(id, film);
+		int andIncrement = filmId.getAndIncrement();
+		film.setId(andIncrement);
+		amountOfFilm.add(film);
 	}
 
 	@Override
-	public void updateFilm(Film film) {
-		Film film1 = amountOfFilm.get(film.getId());
-		film1.setName(film.getName() != null ? film.getName() : film1.getName());
-		film1.setDescription(film.getDescription() != null ? film.getDescription() : film1.getDescription());
-		film1.setReleaseDate(film.getReleaseDate() != null ? film.getReleaseDate() : film1.getReleaseDate());
-		film1.setDuration(film.getDuration());
+	public void updateFilm(Film film, Film a) {
+		if (a.getId() == film.getId()) {
+			a.setName(film.getName());
+			a.setDescription(film.getDescription());
+			a.setReleaseDate(film.getReleaseDate());
+			a.setDuration(film.getDuration());
+		}
+
 	}
 
 	@Override
 	public void deleteToFilm(Film film) {
-		amountOfFilm.remove(film.getId());
+		amountOfFilm.remove(film);
 	}
 
 	@Override
-	public Map<Integer, Film> getListOfFilms() {
+	public Set<Film> getListOfFilms() {
 		return amountOfFilm;
 	}
 }

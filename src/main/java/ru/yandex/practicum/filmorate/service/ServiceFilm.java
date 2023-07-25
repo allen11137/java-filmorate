@@ -4,17 +4,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.AlreadyObjectExistsException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.exception.NotFoundFilmException;
 import ru.yandex.practicum.filmorate.exception.NotFoundUserException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.Film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.Film.InMemoryFilmStorage;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -24,7 +23,10 @@ public class ServiceFilm implements FilmStorage {
 	public static final LocalDate FIRST_DATE_OF_RELEASE = LocalDate.of(1895, 12, 28);
 	public static final int SIZE_OF_DESCRIPTION = 200;
 
+
 	private final FilmStorage inMemoryFilmStorage;
+	public InMemoryFilmStorage inMemoryFilmStorage1;
+
 
 	@Override
 	public void addToFilm(Film film) {
@@ -37,9 +39,9 @@ public class ServiceFilm implements FilmStorage {
 	}
 
 	@Override
-	public void updateFilm(Film film) {
-		if (verifyOptionsOfFilm(film)) {
-			inMemoryFilmStorage.updateFilm(film);
+	public void updateFilm(Film film, Film a) {
+		if (verifyOptionsOfFilm(a)) {
+			inMemoryFilmStorage.updateFilm(film, a);
 			log.info("База фильмов обновлена: {}", film);
 		} else {
 			throw new NotFoundFilmException(film.getId());
@@ -56,24 +58,21 @@ public class ServiceFilm implements FilmStorage {
 	}
 
 	@Override
-	public Map<Integer, Film> getListOfFilms() {
+	public Set<Film> getListOfFilms() {
 		return inMemoryFilmStorage.getListOfFilms();
 	}
 
-	public Film getOfIdFilm(int id) {
-		if (getListOfFilms().containsKey(id)) {
-			return getListOfFilms().get(id);
-		} else {
-			throw new NotFoundFilmException(id);
-		}
+	public Film getOfIdFilm(long id) {
+		return getListOfFilms().stream().filter(a -> a.getId() == id).findFirst()
+				.orElseThrow(() -> new NotFoundFilmException(id));
 	}
 
 	public boolean verifyOptionsOfFilm(Film film) {
-		return getListOfFilms().containsKey(film.getId());
+		return getListOfFilms().stream().anyMatch(a -> a.getId() == film.getId());
 	}
 
 	public List<Film> getListOfLovelyFilms(int amount) {
-		List<Film> fs = getListOfFilms().values().stream()
+		List<Film> fs = getListOfFilms().stream()
 				.sorted(Comparator.comparingInt(g -> g.getListOfLike().size()))
 				.collect(Collectors.toList());
 		Collections.reverse(fs);
@@ -81,14 +80,14 @@ public class ServiceFilm implements FilmStorage {
 		return fs.stream().limit(Math.min(getListOfFilms().size(), amount)).collect(Collectors.toList());
 	}
 
-	public Film joinLikeToFilm(int filmId, int idOfUser) {
+	public Film joinLikeToFilm(long filmId, long idOfUser) {
 		getOfIdFilm(idOfUser);
 		getOfIdFilm(filmId).getListOfLike().add(idOfUser);
 		log.info("joinLikeToFilm {}", getOfIdFilm(filmId));
 		return getOfIdFilm(filmId);
 	}
 
-	public Film deleteToLike(int filmId, int idOfUser) {
+	public Film deleteToLike(long filmId, long idOfUser) {
 		if (getOfIdFilm(filmId).getListOfLike().contains(idOfUser)) {
 			getOfIdFilm(filmId).getListOfLike().remove(idOfUser);
 			log.info("Отметка мне нравится удалена filmId {}, idOfUser {}", filmId, idOfUser);
@@ -111,6 +110,10 @@ public class ServiceFilm implements FilmStorage {
 		} else {
 			return film;
 		}
+	}
+
+	public void updateOptionsOfFilm(Film film) {
+		inMemoryFilmStorage1.amountOfFilm.forEach(a -> updateFilm(film, a));
 	}
 
 }
