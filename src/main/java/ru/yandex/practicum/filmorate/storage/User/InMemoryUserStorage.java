@@ -16,6 +16,10 @@ public class InMemoryUserStorage implements UserStorage {
 	public final Set<User> amountOfUsers = new HashSet<>();
 	public static final AtomicInteger idOfUser = new AtomicInteger();
 
+	static {
+		idOfUser.set(1);
+	}
+
 	@Override
 	public void addUser(User user) {
 		int andIncrement = idOfUser.getAndIncrement();

@@ -25,14 +25,15 @@ public class InMemoryFilmStorage implements FilmStorage {
 	}
 
 	@Override
-	public void updateFilm(Film film, Film a) {
-		if (a.getId() == film.getId()) {
-			a.setName(film.getName());
-			a.setDescription(film.getDescription());
-			a.setReleaseDate(film.getReleaseDate());
-			a.setDuration(film.getDuration());
-		}
-
+	public void updateFilm(Film film) {
+		amountOfFilm.forEach(a -> {
+			if (a.getId() == film.getId()) {
+				a.setName(film.getName());
+				a.setDescription(film.getDescription());
+				a.setReleaseDate(film.getReleaseDate());
+				a.setDuration(film.getDuration());
+			}
+		});
 	}
 
 	@Override
