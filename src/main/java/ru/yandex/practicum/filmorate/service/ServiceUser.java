@@ -35,6 +35,7 @@ public class ServiceUser implements UserStorage {
 
 	@Override
 	public void renewInfoOfUser(User user) {
+		verifyOptionsOfUser(user);
 		if (checkAddOfUsers(user)) {
 			userStorage.renewInfoOfUser(user);
 			log.info("Данные о пользователе обновлены: {}", user);

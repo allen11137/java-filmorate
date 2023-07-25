@@ -39,9 +39,9 @@ public class ServiceFilm implements FilmStorage {
 	}
 
 	@Override
-	public void updateFilm(Film film, Film a) {
-		if (verifyOptionsOfFilm(a)) {
-			inMemoryFilmStorage.updateFilm(film, a);
+	public void updateFilm(Film film) {
+		if (verifyOptionsOfFilm(film)) {
+			inMemoryFilmStorage.updateFilm(film);
 			log.info("База фильмов обновлена: {}", film);
 		} else {
 			throw new NotFoundFilmException(film.getId());
@@ -110,10 +110,6 @@ public class ServiceFilm implements FilmStorage {
 		} else {
 			return film;
 		}
-	}
-
-	public void updateOptionsOfFilm(Film film) {
-		inMemoryFilmStorage1.amountOfFilm.forEach(a -> updateFilm(film, a));
 	}
 
 }
