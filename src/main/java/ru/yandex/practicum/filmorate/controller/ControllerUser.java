@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.ServiceUser;
 import ru.yandex.practicum.filmorate.exception.AlreadyObjectExistsException;
+import ru.yandex.practicum.filmorate.storage.User.InMemoryUserStorage;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -22,29 +23,47 @@ import java.util.List;
 public class ControllerUser {
 	private final ServiceUser serviceUser;
 
+
 	@GetMapping
 	public List<User> getListOfUser() {
-		log.info("Список пользователей: {}", serviceUser.amountOfUsers.size());
-		return new ArrayList<>(serviceUser.amountOfUsers);
+		log.info("Число пользователей: {}", serviceUser.getListOfUser().size());
+		return serviceUser.getListOfUser();
 	}
 
 	@PostMapping
-	ResponseEntity<User> makeUser(@Valid @RequestBody User user) throws AlreadyObjectExistsException, ValidationException {
-		if (!serviceUser.amountOfUsers.contains(user)) {
-			serviceUser.addUser(serviceUser.verifyOptionsOfUser(user));
-			return ResponseEntity.status(HttpStatus.OK).body(user);
-		} else {
-			throw new AlreadyObjectExistsException("Пользователь уже был добавлен" + user.getEmail());
-		}
+	ResponseEntity<User> makeUser(@Valid @RequestBody User user) {
+		serviceUser.addUser(serviceUser.verifyOptionsOfUser(user));
+		return ResponseEntity.status(HttpStatus.OK).body(user);
 	}
 
 	@PutMapping
-	ResponseEntity<User> userUpdate(@Valid @RequestBody User user) throws NotFoundException, ValidationException {
-		if (serviceUser.checkAddOfUsers(user)) {
-			serviceUser.renewInfoOfUser(serviceUser.verifyOptionsOfUser(user));
-			return ResponseEntity.status(HttpStatus.OK).body(user);
-		} else {
-			throw new NotFoundException("Пользователь не найден с id: " + user.getId());
-		}
+	ResponseEntity<User> userUpdate(@Valid @RequestBody User user) {
+		serviceUser.renewInfoOfUser(user);
+		return ResponseEntity.status(HttpStatus.OK).body(user);
+	}
+
+	@PutMapping("/{id}/friends/{friendId}")
+	ResponseEntity<User> joinToFriend(@PathVariable long id, @PathVariable long friendId) {
+		return ResponseEntity.status(HttpStatus.OK).body(serviceUser.userFriends(id, friendId));
+	}
+
+	@DeleteMapping("/{id}/friends/{friendId}")
+	ResponseEntity<User> removeFromFriends(@PathVariable long id, @PathVariable long friendId) {
+		return ResponseEntity.status(HttpStatus.OK).body(serviceUser.deleteFromFriends(id, friendId));
+	}
+
+	@GetMapping("/{idOfUser}")
+	ResponseEntity<User> getUser(@PathVariable long idOfUser) {
+		return ResponseEntity.status(HttpStatus.OK).body(serviceUser.getOfUser(idOfUser));
+	}
+
+	@GetMapping("/{id}/friends")
+	ResponseEntity<List<User>> getListFriends(@PathVariable long id) {
+		return ResponseEntity.status(HttpStatus.OK).body(serviceUser.amountOfFriends(id));
+	}
+
+	@GetMapping("/{id}/friends/common/{otherId}")
+	ResponseEntity<List<User>> getListFriends(@PathVariable long id, @PathVariable long otherId) {
+		return ResponseEntity.status(HttpStatus.OK).body(serviceUser.mainFriends(id, otherId));
 	}
 }

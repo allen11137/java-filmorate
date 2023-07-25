@@ -1,24 +1,100 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.AlreadyObjectExistsException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.exception.NotFoundUserException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.User.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.User.UserStorage;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Service
-public class ServiceUser {
-	public final Set<User> amountOfUsers = new HashSet<>();
-	public static final AtomicInteger idOfUser = new AtomicInteger();
+@RequiredArgsConstructor
+public class ServiceUser implements UserStorage {
 
-	static {
-		idOfUser.set(1);
+	private final InMemoryUserStorage userStorage;
+
+
+	@Override
+	public void addUser(User user) {
+		if (!checkAddOfUsers(user)) {
+			userStorage.addUser(user);
+			log.info("User добавлен: {}", user);
+		} else {
+			throw new AlreadyObjectExistsException(String.format("Пользователь уже был добавлен", user.getName()));
+		}
+	}
+
+	@Override
+	public void renewInfoOfUser(User user) {
+		if (checkAddOfUsers(user)) {
+			userStorage.renewInfoOfUser(user);
+			log.info("Данные о пользователе обновлены: {}", user);
+		} else {
+			throw new NotFoundUserException(user.getId());
+		}
+	}
+
+	@Override
+	public void deleteToUser(User user) {
+		if (checkAddOfUsers(user)) {
+			userStorage.deleteToUser(user);
+		} else {
+			throw new NotFoundUserException(user.getId());
+		}
+	}
+
+	public List<User> getListOfUser() {
+		return userStorage.getUsers();
+	}
+
+	public User getOfUser(long idOfUser) {
+		log.info("Пользователь idOfUser {}", idOfUser);
+		return userStorage.getUsers().stream()
+				.filter(u -> u.getId() == idOfUser).findFirst()
+				.orElseThrow(() -> new NotFoundUserException(idOfUser));
+	}
+
+	public User userFriends(long idOfUser, long idOfFriend) {
+		User user = getOfUser(idOfUser);
+		User user1 = getOfUser(idOfFriend);
+		user.getAmountIdOfFriend().add(idOfFriend);
+		user1.getAmountIdOfFriend().add(idOfUser);
+		log.info("Друг добавлен {}", idOfFriend);
+		return user;
+	}
+
+	public User deleteFromFriends(long idOfUser, long idOfFriend) {
+		getOfUser(idOfUser).getAmountIdOfFriend().remove(idOfFriend);
+		getOfUser(idOfFriend).getAmountIdOfFriend().remove(idOfUser);
+		log.info("Пользователь удален из друзей {}", idOfFriend);
+		return getOfUser(idOfFriend);
+	}
+
+	public List<User> amountOfFriends(long idOfUser) {
+		List<User> listOfFriend = new ArrayList<>();
+		getOfUser(idOfUser).getAmountIdOfFriend().forEach(f -> listOfFriend.add(getOfUser(f)));
+		log.info("Список друзей пользователя {}", idOfUser);
+		return listOfFriend;
+	}
+
+	public List<User> mainFriends(long idOfUser, long idOfFriend) {
+		List<User> listOfFriend = new ArrayList<>();
+		getOfUser(idOfUser).getAmountIdOfFriend().stream()
+				.flatMap(g -> getOfUser(idOfFriend)
+						.getAmountIdOfFriend().stream()
+						.filter(a -> Objects.equals(g, a)))
+				.forEach(y -> listOfFriend.add(getOfUser(y)));
+		log.info("Список общих друзей с пользователем {}", idOfUser);
+		return listOfFriend;
 	}
 
 	public User verifyOptionsOfUser(User user) throws ValidationException {
@@ -36,27 +112,10 @@ public class ServiceUser {
 		}
 	}
 
-	public void renewInfoOfUser(User user) {
-		amountOfUsers.forEach(a -> {
-			if (a.getId() == user.getId()) {
-				a.setName(user.getName());
-				a.setBirthday(user.getBirthday());
-				a.setLogin(user.getLogin());
-				a.setEmail(user.getEmail());
-			}
-			log.info("Информация о user обновлена: {}", user);
-		});
-	}
-
-	public void addUser(User user) {
-		int andIncrement = idOfUser.getAndIncrement();
-		user.setId(andIncrement);
-		log.info("User добавлен: {}", user);
-		amountOfUsers.add(user);
-	}
 
 	public boolean checkAddOfUsers(User user) {
-		return amountOfUsers.stream().anyMatch(a -> a.getId() == user.getId());
+		return userStorage.amountOfUsers.stream().anyMatch(a -> a.getId() == user.getId());
 	}
 
 }
+

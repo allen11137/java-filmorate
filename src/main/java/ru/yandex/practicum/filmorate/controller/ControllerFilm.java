@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.ServiceFilm;
+import ru.yandex.practicum.filmorate.storage.Film.InMemoryFilmStorage;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -24,33 +25,45 @@ public class ControllerFilm {
 
 	private final ServiceFilm serviceFilm;
 
+
 	@GetMapping
 	public List<Film> getListOfFilms() {
-		log.info("Список фильмов: {}", serviceFilm.amountOfFilm);
-		return new ArrayList<>(serviceFilm.amountOfFilm);
+		log.info("Список фильмов: {}", serviceFilm.getListOfFilms().size());
+		return new ArrayList<>(serviceFilm.getListOfFilms());
 	}
 
 	@PostMapping
-	public ResponseEntity<Film> makeFilm(@Valid @RequestBody Film film) throws ValidationException, AlreadyObjectExistsException {
-		if (!serviceFilm.amountOfFilm.contains(film)) {
-			serviceFilm.addToFilm(serviceFilm.verifyParametrOfFilm(film));
-			return ResponseEntity.status(HttpStatus.OK).body(film);
-		} else {
-			throw new AlreadyObjectExistsException("Фильм уже в списке");
-		}
+	public ResponseEntity<Film> makeFilm(@Valid @RequestBody Film film) {
+		serviceFilm.addToFilm(serviceFilm.verifyParametrOfFilm(film));
+		return ResponseEntity.status(HttpStatus.OK).body(film);
 	}
 
 	@PutMapping
-	public ResponseEntity<Film> filmUpdate(@Valid @RequestBody Film film) throws ValidationException, NotFoundException {
-		if (serviceFilm.verifyOptionsOfFilm(film)) {
-			serviceFilm.updateOptionsOfFilm(film);
-			log.info("Фильм обновлён: {}", film);
-			return ResponseEntity.status(HttpStatus.OK).body(film);
-		} else {
-			throw new NotFoundException("Фильм не найден" + film.getId());
-		}
+	public ResponseEntity<Film> filmUpdate(@Valid @RequestBody Film film, Film a) {
+		serviceFilm.updateFilm(film, a);
+		return ResponseEntity.status(HttpStatus.OK).body(film);
+	}
+
+	@GetMapping("/{filmId}")
+	public ResponseEntity<Film> lookForFilm(@PathVariable long filmId) {
+		return ResponseEntity.status(HttpStatus.OK).body(serviceFilm.getOfIdFilm(filmId));
 	}
 
 
+	@PutMapping("/{id}/like/{userId}")
+	public ResponseEntity<Film> favouriteFilms(@PathVariable long filmId, @PathVariable long idOfUser) {
+		return ResponseEntity.status(HttpStatus.OK).body(serviceFilm.joinLikeToFilm(filmId, idOfUser));
+	}
+
+
+	@DeleteMapping("/{id}/like/{userId}")
+	public ResponseEntity<Film> deleteLikeInFilm(@PathVariable long filmId, @PathVariable long idOfUser) {
+		return ResponseEntity.status(HttpStatus.OK).body(serviceFilm.deleteToLike(filmId, idOfUser));
+	}
+
+	@GetMapping("/popular")
+	public ResponseEntity<List<Film>> getFavoriteFilm(@RequestParam(defaultValue = "10", required = false) int count) {
+		return ResponseEntity.status(HttpStatus.OK).body(serviceFilm.getListOfLovelyFilms(count));
+	}
 }
 
