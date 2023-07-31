@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.ServiceFilm;
 
-
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,23 +24,24 @@ public class ControllerFilm {
 	@GetMapping
 	public List<Film> getListOfFilms() {
 		log.info("Список фильмов: {}", serviceFilm.getListOfFilms().size());
-		return new ArrayList<>(serviceFilm.getListOfFilms());
+		return new ArrayList<>(serviceFilm.getListOfFilms().values());
 	}
 
 	@PostMapping
-	public ResponseEntity<Film> makeFilm(@Valid @RequestBody Film film) {
+	public ResponseEntity<Film> makeFilm(@RequestBody Film film) {
 		serviceFilm.addToFilm(serviceFilm.verifyParametrOfFilm(film));
 		return ResponseEntity.status(HttpStatus.OK).body(film);
 	}
 
 	@PutMapping
-	public ResponseEntity<Film> filmUpdate(@Valid @RequestBody Film film) {
+	public ResponseEntity<Film> filmUpdate(@RequestBody Film film) {
 		serviceFilm.updateFilm(film);
 		return ResponseEntity.status(HttpStatus.OK).body(film);
 	}
 
 	@GetMapping("/{filmId}")
 	public ResponseEntity<Film> lookForFilm(@PathVariable long filmId) {
+
 		return ResponseEntity.status(HttpStatus.OK).body(serviceFilm.getOfIdFilm(filmId));
 	}
 

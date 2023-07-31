@@ -10,7 +10,7 @@ public class ThrowException extends Throwable {
 	@ExceptionHandler
 	public ErrorResponse handleUnauthorizedUser(final Throwable e) {
 		return new ErrorResponse(
-				"Произошла непредвиденная ошибка.", e.getMessage()
-		);
+				"Произошла непредвиденная ошибка.",
+				e.getMessage());
 	}
 }
