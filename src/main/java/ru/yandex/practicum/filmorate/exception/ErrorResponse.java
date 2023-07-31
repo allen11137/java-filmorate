@@ -3,19 +3,18 @@ package ru.yandex.practicum.filmorate.exception;
 public class ErrorResponse {
 	// название ошибки
 	String error;
+	String message;
 
-	String description;
-
-	public ErrorResponse(String error, String description) {
+	public ErrorResponse(String error, String message) {
 		this.error = error;
-		this.description = description;
+		this.message = message;
 	}
 
 	public String getError() {
 		return error;
 	}
 
-	public String getDescription() {
-		return description;
+	public String getMessage() {
+		return message;
 	}
 }

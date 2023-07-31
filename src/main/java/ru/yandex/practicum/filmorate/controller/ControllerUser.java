@@ -12,7 +12,6 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.ServiceUser;
 
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -30,13 +29,13 @@ public class ControllerUser {
 	}
 
 	@PostMapping
-	ResponseEntity<User> makeUser(@Valid @RequestBody User user) {
-		serviceUser.addUser(serviceUser.verifyOptionsOfUser(user));
+	ResponseEntity<User> makeUser(@RequestBody User user) {
+		serviceUser.addUser(user);
 		return ResponseEntity.status(HttpStatus.OK).body(user);
 	}
 
 	@PutMapping
-	ResponseEntity<User> userUpdate(@Valid @RequestBody User user) throws NotFoundException, ValidationException {
+	ResponseEntity<User> userUpdate(@RequestBody User user) throws NotFoundException, ValidationException {
 		serviceUser.renewInfoOfUser(user);
 		return ResponseEntity.status(HttpStatus.OK).body(user);
 	}
