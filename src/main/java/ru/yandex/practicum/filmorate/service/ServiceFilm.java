@@ -25,7 +25,6 @@ public class ServiceFilm implements FilmStorage {
 
 
 	private final FilmStorage inMemoryFilmStorage;
-	public InMemoryFilmStorage inMemoryFilmStorage1;
 
 
 	@Override
@@ -58,21 +57,24 @@ public class ServiceFilm implements FilmStorage {
 	}
 
 	@Override
-	public Set<Film> getListOfFilms() {
+	public Map<Integer, Film> getListOfFilms() {
 		return inMemoryFilmStorage.getListOfFilms();
 	}
 
 	public Film getOfIdFilm(long id) {
-		return getListOfFilms().stream().filter(a -> a.getId() == id).findFirst()
-				.orElseThrow(() -> new NotFoundFilmException(id));
+		if (getListOfFilms().containsKey(id)) {
+			return getListOfFilms().get(id);
+		} else {
+			throw new NotFoundFilmException(id);
+		}
 	}
 
 	public boolean verifyOptionsOfFilm(Film film) {
-		return getListOfFilms().stream().anyMatch(a -> a.getId() == film.getId());
+		return getListOfFilms().containsKey(film.getId());
 	}
 
 	public List<Film> getListOfLovelyFilms(int amount) {
-		List<Film> fs = getListOfFilms().stream()
+		List<Film> fs = getListOfFilms().values().stream()
 				.sorted(Comparator.comparingInt(g -> g.getListOfLike().size()))
 				.collect(Collectors.toList());
 		Collections.reverse(fs);

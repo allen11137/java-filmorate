@@ -25,11 +25,11 @@ public class ServiceUser implements UserStorage {
 
 	@Override
 	public void addUser(User user) {
-		if (!checkAddOfUsers(user)) {
+		if (!checkAddOfUsers(user) && verifyOptionsOfUser(user) == user) {
 			userStorage.addUser(user);
 			log.info("User добавлен: {}", user);
 		} else {
-			throw new AlreadyObjectExistsException(String.format("Пользователь уже был добавлен", user.getName()));
+			throw new AlreadyObjectExistsException(String.format("Пользователь %s уже был добавлен", user.getName()));
 		}
 	}
 
@@ -58,19 +58,25 @@ public class ServiceUser implements UserStorage {
 	}
 
 	public User getOfUser(long idOfUser) {
-		log.info("Пользователь idOfUser {}", idOfUser);
-		return userStorage.getUsers().stream()
-				.filter(u -> u.getId() == idOfUser).findFirst()
-				.orElseThrow(() -> new NotFoundUserException(idOfUser));
+		if (userStorage.amountOfUsers.containsKey(idOfUser)) {
+			log.info("Пользователь idOfUser {}", idOfUser);
+			return userStorage.amountOfUsers.get(idOfUser);
+		} else {
+			throw new NotFoundUserException(idOfUser);
+		}
 	}
 
 	public User userFriends(long idOfUser, long idOfFriend) {
 		User user = getOfUser(idOfUser);
 		User user1 = getOfUser(idOfFriend);
-		user.getAmountIdOfFriend().add(idOfFriend);
-		user1.getAmountIdOfFriend().add(idOfUser);
-		log.info("Друг добавлен {}", idOfFriend);
-		return user;
+		if (idOfFriend != idOfFriend) {
+			user.getAmountIdOfFriend().add(idOfFriend);
+			user1.getAmountIdOfFriend().add(idOfUser);
+			log.info("Друг добавлен {}", idOfFriend);
+			return user;
+		} else {
+			throw new ValidationException("Id пользователя не может совпадать с id друга");
+		}
 	}
 
 	public User deleteFromFriends(long idOfUser, long idOfFriend) {
@@ -103,7 +109,7 @@ public class ServiceUser implements UserStorage {
 			throw new ValidationException("Неправильное имя User");
 		} else if (user.getEmail().isBlank() || !EmailValidator.getInstance().isValid(user.getEmail())) {
 			throw new ValidationException("Неправильный адрес электронной почты");
-		} else if (user.getBirthday().isAfter(LocalDate.now())) {
+		} else if (user.getBirthday() == null || user.getBirthday().isAfter(LocalDate.now())) {
 			throw new ValidationException("Неправильная дата рождения");
 		} else {
 			if (user.getName() == null || user.getName().isBlank()) {
@@ -115,7 +121,7 @@ public class ServiceUser implements UserStorage {
 
 
 	public boolean checkAddOfUsers(User user) {
-		return userStorage.amountOfUsers.stream().anyMatch(a -> a.getId() == user.getId());
+		return userStorage.amountOfUsers.containsKey(user.getId());
 	}
 
 }
