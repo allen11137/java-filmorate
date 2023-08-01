@@ -4,7 +4,9 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.Map;
 
+
 public interface FilmStorage {
+
 	void addToFilm(Film film);
 
 	void updateFilm(Film film);
