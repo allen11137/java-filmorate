@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NonNull;
 
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
@@ -27,7 +28,7 @@ public class Film {
 
 	@NonNull
 	private long duration;
-	private Set<Long> listOfLike = new HashSet<>();
+	private Set<Integer> listOfLike = new HashSet<>();
 
 	public Film(String name, String description, LocalDate releaseDate, long duration) {
 		this.name = name;
