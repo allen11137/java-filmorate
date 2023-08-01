@@ -4,15 +4,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.AlreadyObjectExistsException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.exception.NotFoundFilmException;
 import ru.yandex.practicum.filmorate.exception.NotFoundUserException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.Film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.Film.InMemoryFilmStorage;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -22,9 +24,7 @@ public class ServiceFilm implements FilmStorage {
 	public static final LocalDate FIRST_DATE_OF_RELEASE = LocalDate.of(1895, 12, 28);
 	public static final int SIZE_OF_DESCRIPTION = 200;
 
-
 	private final FilmStorage inMemoryFilmStorage;
-
 
 	@Override
 	public void addToFilm(Film film) {
@@ -60,7 +60,7 @@ public class ServiceFilm implements FilmStorage {
 		return inMemoryFilmStorage.getListOfFilms();
 	}
 
-	public Film getOfIdFilm(long id) {
+	public Film getOfIdFilm(int id) {
 		if (getListOfFilms().containsKey(id)) {
 			return getListOfFilms().get(id);
 		} else {
@@ -81,14 +81,14 @@ public class ServiceFilm implements FilmStorage {
 		return fs.stream().limit(Math.min(getListOfFilms().size(), amount)).collect(Collectors.toList());
 	}
 
-	public Film joinLikeToFilm(long filmId, long idOfUser) {
+	public Film joinLikeToFilm(int filmId, int idOfUser) {
 		getOfIdFilm(idOfUser);
 		getOfIdFilm(filmId).getListOfLike().add(idOfUser);
 		log.info("joinLikeToFilm {}", getOfIdFilm(filmId));
 		return getOfIdFilm(filmId);
 	}
 
-	public Film deleteToLike(long filmId, long idOfUser) {
+	public Film deleteToLike(int filmId, int idOfUser) {
 		if (getOfIdFilm(filmId).getListOfLike().contains(idOfUser)) {
 			getOfIdFilm(filmId).getListOfLike().remove(idOfUser);
 			log.info("Отметка мне нравится удалена filmId {}, idOfUser {}", filmId, idOfUser);
