@@ -4,12 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.AlreadyObjectExistsException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.exception.NotFoundFilmException;
 import ru.yandex.practicum.filmorate.exception.NotFoundUserException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.Film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.Film.InMemoryFilmStorage;
 
 import java.time.LocalDate;
 import java.util.*;
