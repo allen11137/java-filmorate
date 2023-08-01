@@ -23,7 +23,7 @@ public class User {
 	private LocalDate birthday;
 
 	@JsonIgnore
-	private Set<Integer> amountIdOfFriend = new HashSet<>();
+	private Set<Long> amountIdOfFriend = new HashSet<>();
 
 	public User(String email, String login, String name, LocalDate birthday) {
 		this.email = email;
