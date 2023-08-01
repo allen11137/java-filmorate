@@ -19,25 +19,23 @@ public class InMemoryFilmStorage implements FilmStorage {
 
 	@Override
 	public void addToFilm(Film film) {
-		int andIncrement = filmId.getAndIncrement();
-		film.setId(andIncrement);
-		amountOfFilm.put(andIncrement, film);
+		int id = filmId.getAndIncrement();
+		film.setId(id);
+		amountOfFilm.put(id, film);
 	}
 
 	@Override
 	public void updateFilm(Film film) {
-		if (amountOfFilm.containsKey(film.getId())) {
-			Film film1 = amountOfFilm.get(filmId);
-			film1.setName(film.getName());
-			film1.setDescription(film.getDescription());
-			film1.setReleaseDate(film.getReleaseDate());
-			film1.setDuration(film.getDuration());
-		}
+		Film film1 = amountOfFilm.get(film.getId());
+		film1.setName(film.getName() != null ? film.getName() : film1.getName());
+		film1.setDescription(film.getDescription() != null ? film.getDescription() : film1.getDescription());
+		film1.setReleaseDate(film.getReleaseDate() != null ? film.getReleaseDate() : film1.getReleaseDate());
+		film1.setDuration(film.getDuration());
 	}
 
 	@Override
 	public void deleteToFilm(Film film) {
-		amountOfFilm.remove(film);
+		amountOfFilm.remove(film.getId());
 	}
 
 	@Override

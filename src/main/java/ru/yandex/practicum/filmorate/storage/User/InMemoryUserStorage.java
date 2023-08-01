@@ -8,9 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
-
-
-	public final Map<Integer, User> amountOfUsers = new HashMap<>();
+	public Map<Integer, User> amountOfUsers = new HashMap<>();
 	public static final AtomicInteger idOfUser = new AtomicInteger();
 
 	static {
@@ -19,27 +17,26 @@ public class InMemoryUserStorage implements UserStorage {
 
 	@Override
 	public void addUser(User user) {
-		int andIncrement = idOfUser.getAndIncrement();
-		user.setId(andIncrement);
-		amountOfUsers.put(andIncrement, user);
+		int id = idOfUser.getAndIncrement();
+		user.setId(id);
+		amountOfUsers.put(id, user);
 	}
 
 	@Override
 	public void renewInfoOfUser(User user) {
-		if (amountOfUsers.containsKey(user.getId())) {
-			user.setName(user.getName());
-			user.setBirthday(user.getBirthday());
-			user.setLogin(user.getLogin());
-			user.setEmail(user.getEmail());
-		}
+		User updatedUser = amountOfUsers.get(user.getId());
+		updatedUser.setName(user.getName() != null ? user.getName() : updatedUser.getName());
+		updatedUser.setBirthday(user.getBirthday() != null ? user.getBirthday() : updatedUser.getBirthday());
+		updatedUser.setLogin(user.getLogin() != null ? user.getLogin() : updatedUser.getLogin());
+		updatedUser.setEmail(user.getEmail() != null ? user.getEmail() : updatedUser.getEmail());
 	}
 
 	@Override
 	public void deleteToUser(User user) {
-		amountOfUsers.remove(user);
+		amountOfUsers.remove(user.getId());
 	}
 
-	public List<User> getUsers() {
-		return new ArrayList<>(amountOfUsers.values());
+	public Map<Integer, User> getUsers() {
+		return amountOfUsers;
 	}
 }
