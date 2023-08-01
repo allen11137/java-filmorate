@@ -11,15 +11,12 @@ import ru.yandex.practicum.filmorate.service.ServiceFilm;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Slf4j
 @RestController
 @RequestMapping("/films")
 @RequiredArgsConstructor
 public class ControllerFilm {
-
 	private final ServiceFilm serviceFilm;
-
 
 	@GetMapping
 	public List<Film> getListOfFilms() {
@@ -40,20 +37,18 @@ public class ControllerFilm {
 	}
 
 	@GetMapping("/{filmId}")
-	public ResponseEntity<Film> lookForFilm(@PathVariable long filmId) {
+	public ResponseEntity<Film> lookForFilm(@PathVariable int filmId) {
 
 		return ResponseEntity.status(HttpStatus.OK).body(serviceFilm.getOfIdFilm(filmId));
 	}
 
-
 	@PutMapping("/{id}/like/{userId}")
-	public ResponseEntity<Film> favouriteFilms(@PathVariable long id, @PathVariable long userId) {
+	public ResponseEntity<Film> favouriteFilms(@PathVariable int id, @PathVariable int userId) {
 		return ResponseEntity.status(HttpStatus.OK).body(serviceFilm.joinLikeToFilm(id, userId));
 	}
 
-
 	@DeleteMapping("/{id}/like/{userId}")
-	public ResponseEntity<Film> deleteLikeInFilm(@PathVariable long id, @PathVariable long userId) {
+	public ResponseEntity<Film> deleteLikeInFilm(@PathVariable int id, @PathVariable int userId) {
 		return ResponseEntity.status(HttpStatus.OK).body(serviceFilm.deleteToLike(id, userId));
 	}
 

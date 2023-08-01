@@ -27,7 +27,7 @@ public class Film {
 
 	@NonNull
 	private long duration;
-	private Set<Long> listOfLike = new HashSet<>();
+	private Set<Integer> listOfLike = new HashSet<>();
 
 	public Film(String name, String description, LocalDate releaseDate, long duration) {
 		this.name = name;

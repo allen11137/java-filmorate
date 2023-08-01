@@ -19,14 +19,12 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class ServiceUser implements UserStorage {
-
 	private final InMemoryUserStorage userStorage;
-
 
 	@Override
 	public void addUser(User user) {
-		if (!checkAddOfUsers(user) && verifyOptionsOfUser(user) == user) {
-			userStorage.addUser(user);
+		if (!isContainsUser(user)) {
+			userStorage.addUser(verifyOptionsOfUser(user));
 			log.info("User добавлен: {}", user);
 		} else {
 			throw new AlreadyObjectExistsException(String.format("Пользователь %s уже был добавлен", user.getName()));
@@ -36,7 +34,7 @@ public class ServiceUser implements UserStorage {
 	@Override
 	public void renewInfoOfUser(User user) {
 		verifyOptionsOfUser(user);
-		if (checkAddOfUsers(user)) {
+		if (isContainsUser(user)) {
 			userStorage.renewInfoOfUser(user);
 			log.info("Данные о пользователе обновлены: {}", user);
 		} else {
@@ -46,18 +44,18 @@ public class ServiceUser implements UserStorage {
 
 	@Override
 	public void deleteToUser(User user) {
-		if (checkAddOfUsers(user)) {
+		if (isContainsUser(user)) {
 			userStorage.deleteToUser(user);
 		} else {
 			throw new NotFoundUserException(user.getId());
 		}
 	}
 
-	public List<User> getListOfUser() {
-		return userStorage.getUsers();
+	public List<User> getUsers() {
+		return new ArrayList<>(userStorage.getUsers().values());
 	}
 
-	public User getOfUser(long idOfUser) {
+	public User getOfUser(Integer idOfUser) {
 		if (userStorage.amountOfUsers.containsKey(idOfUser)) {
 			log.info("Пользователь idOfUser {}", idOfUser);
 			return userStorage.amountOfUsers.get(idOfUser);
@@ -66,10 +64,10 @@ public class ServiceUser implements UserStorage {
 		}
 	}
 
-	public User userFriends(long idOfUser, long idOfFriend) {
+	public User userFriends(int idOfUser, int idOfFriend) {
 		User user = getOfUser(idOfUser);
 		User user1 = getOfUser(idOfFriend);
-		if (idOfFriend != idOfFriend) {
+		if (idOfUser != idOfFriend) {
 			user.getAmountIdOfFriend().add(idOfFriend);
 			user1.getAmountIdOfFriend().add(idOfUser);
 			log.info("Друг добавлен {}", idOfFriend);
@@ -79,21 +77,21 @@ public class ServiceUser implements UserStorage {
 		}
 	}
 
-	public User deleteFromFriends(long idOfUser, long idOfFriend) {
+	public User deleteFromFriends(int idOfUser, int idOfFriend) {
 		getOfUser(idOfUser).getAmountIdOfFriend().remove(idOfFriend);
 		getOfUser(idOfFriend).getAmountIdOfFriend().remove(idOfUser);
 		log.info("Пользователь удален из друзей {}", idOfFriend);
 		return getOfUser(idOfFriend);
 	}
 
-	public List<User> amountOfFriends(long idOfUser) {
+	public List<User> amountOfFriends(int idOfUser) {
 		List<User> listOfFriend = new ArrayList<>();
 		getOfUser(idOfUser).getAmountIdOfFriend().forEach(f -> listOfFriend.add(getOfUser(f)));
 		log.info("Список друзей пользователя {}", idOfUser);
 		return listOfFriend;
 	}
 
-	public List<User> mainFriends(long idOfUser, long idOfFriend) {
+	public List<User> mainFriends(int idOfUser, int idOfFriend) {
 		List<User> listOfFriend = new ArrayList<>();
 		getOfUser(idOfUser).getAmountIdOfFriend().stream()
 				.flatMap(g -> getOfUser(idOfFriend)
@@ -119,10 +117,8 @@ public class ServiceUser implements UserStorage {
 		}
 	}
 
-
-	public boolean checkAddOfUsers(User user) {
+	public boolean isContainsUser(User user) {
 		return userStorage.amountOfUsers.containsKey(user.getId());
 	}
-
 }
 
