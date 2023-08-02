@@ -11,7 +11,6 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.ServiceUser;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
