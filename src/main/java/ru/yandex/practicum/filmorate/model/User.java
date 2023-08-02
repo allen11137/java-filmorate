@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -23,7 +24,7 @@ public class User {
 	private LocalDate birthday;
 
 	@JsonIgnore
-	private Set<Long> amountIdOfFriend = new HashSet<>();
+	private Set<Integer> amountIdOfFriend = new HashSet<>();
 
 	public User(String email, String login, String name, LocalDate birthday) {
 		this.email = email;
