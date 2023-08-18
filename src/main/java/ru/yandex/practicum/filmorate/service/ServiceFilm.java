@@ -1,27 +1,103 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.AlreadyObjectExistsException;
+import ru.yandex.practicum.filmorate.exception.NotFoundFilmException;
+import ru.yandex.practicum.filmorate.exception.NotFoundUserException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class ServiceFilm {
+@RequiredArgsConstructor
+public class ServiceFilm implements FilmStorage {
 	public static final LocalDate FIRST_DATE_OF_RELEASE = LocalDate.of(1895, 12, 28);
 	public static final int SIZE_OF_DESCRIPTION = 200;
 
-	public static final AtomicInteger filmId = new AtomicInteger();
-	public final Set<Film> amountOfFilm = new HashSet<>();
+	private final FilmStorage inMemoryFilmStorage;
 
-	static {
-		filmId.set(1);
+	@Override
+	public void addToFilm(Film film) {
+		if (!verifyOptionsOfFilm(film)) {
+			inMemoryFilmStorage.addToFilm(film);
+			log.info("Фильм добавлен: {}", film);
+		} else {
+			throw new AlreadyObjectExistsException(String.format("Фильм уже %s был добавлен", film.getName()));
+		}
 	}
+
+	@Override
+	public void updateFilm(Film film) {
+		if (verifyOptionsOfFilm(film)) {
+			inMemoryFilmStorage.updateFilm(film);
+			log.info("База фильмов обновлена: {}", film);
+		} else {
+			throw new NotFoundFilmException(film.getId());
+		}
+	}
+
+	@Override
+	public void deleteToFilm(Film film) {
+		if (verifyOptionsOfFilm(film)) {
+			inMemoryFilmStorage.deleteToFilm(film);
+		} else {
+			throw new NotFoundFilmException(film.getId());
+		}
+	}
+
+	@Override
+	public Map<Integer, Film> getListOfFilms() {
+		return inMemoryFilmStorage.getListOfFilms();
+	}
+
+	public Film getOfIdFilm(int id) {
+		if (getListOfFilms().containsKey(id)) {
+			return getListOfFilms().get(id);
+		} else {
+			throw new NotFoundFilmException(id);
+		}
+	}
+
+	public boolean verifyOptionsOfFilm(Film film) {
+		return getListOfFilms().containsKey(film.getId());
+	}
+
+	public List<Film> getListOfLovelyFilms(int amount) {
+		List<Film> fs = getListOfFilms().values().stream()
+				.sorted(Comparator.comparingInt(g -> g.getListOfLike().size()))
+				.collect(Collectors.toList());
+		Collections.reverse(fs);
+		log.info("getListOfLovelyFilms {}", fs);
+		return fs.stream().limit(Math.min(getListOfFilms().size(), amount)).collect(Collectors.toList());
+	}
+
+	public Film joinLikeToFilm(int filmId, int idOfUser) {
+		getOfIdFilm(idOfUser);
+		getOfIdFilm(filmId).getListOfLike().add(idOfUser);
+		log.info("joinLikeToFilm {}", getOfIdFilm(filmId));
+		return getOfIdFilm(filmId);
+	}
+
+	public Film deleteToLike(int filmId, int idOfUser) {
+		if (getOfIdFilm(filmId).getListOfLike().contains(idOfUser)) {
+			getOfIdFilm(filmId).getListOfLike().remove(idOfUser);
+			log.info("Отметка мне нравится удалена filmId {}, idOfUser {}", filmId, idOfUser);
+			return getOfIdFilm(filmId);
+		} else {
+			throw new NotFoundUserException(idOfUser);
+		}
+	}
+
 
 	public Film verifyParametrOfFilm(Film film) throws ValidationException {
 		if (film.getName() == null || film.getName().isBlank()) {
@@ -35,31 +111,6 @@ public class ServiceFilm {
 		} else {
 			return film;
 		}
-	}
-
-	public void updateOptionsOfFilm(Film film) {
-		amountOfFilm.forEach(a -> updateFilm(film, a));
-	}
-
-	private static void updateFilm(Film film, Film a) {
-		if (a.getId() == film.getId()) {
-			a.setName(film.getName());
-			a.setDescription(film.getDescription());
-			a.setReleaseDate(film.getReleaseDate());
-			a.setDuration(film.getDuration());
-			log.info("База данных обновлена: {}", film);
-		}
-	}
-
-	public void addToFilm(Film film) {
-		int andIncrement = filmId.getAndIncrement();
-		film.setId(andIncrement);
-		amountOfFilm.add(film);
-		log.info("Фильм добавлен: {}", film);
-	}
-
-	public boolean verifyOptionsOfFilm(Film film) {
-		return amountOfFilm.stream().anyMatch(a -> a.getId() == film.getId());
 	}
 
 }
