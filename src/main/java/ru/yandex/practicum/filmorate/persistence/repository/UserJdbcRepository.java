@@ -43,8 +43,8 @@ public class UserJdbcRepository {
 
     public void update(Person person) {
         SqlParameterSource parameterSource = new BeanPropertySqlParameterSource(person);
-        String sql = "UPDATE PERSON SET email    = :email, login    = :login, " +
-                "name     = :name, birthday = :birthday WHERE ID = :id";
+        String sql = "UPDATE PERSON SET email = :email, login = :login, " +
+                "name = :name, birthday = :birthday WHERE ID = :id";
         jdbcTemplate.update(sql, parameterSource);
     }
 
@@ -78,7 +78,7 @@ public class UserJdbcRepository {
     }
 
     public List<Person> findAllFriends(int idOfUser) {
-        String sql = "SELECT * FROM PERSON p LEFT JOIN FRIENDSHIP f ON f.friend_id = p.id" +
+        String sql = "SELECT * FROM PERSON p LEFT JOIN FRIENDSHIP f ON f.friend_id = p.id " +
                 "WHERE f.person_id = :idOfUser and f.status_of_friend = true";
         return jdbcTemplate.query(sql, Map.of("idOfUser", idOfUser), new DataClassRowMapper<>(Person.class));
     }

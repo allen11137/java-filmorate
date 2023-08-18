@@ -13,7 +13,7 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO FRIENDSHIP (person_id, friend_id, status_of_friend)" +
+    @Query(value = "INSERT INTO FRIENDSHIP (person_id, friend_id, status_of_friend) " +
             "VALUES (:idOfUser, :idOfFriend, true)", nativeQuery = true)
     void updatePersonFriend(@Param("idOfUser") int idOfUser, @Param("idOfFriend") int idOfFriend);
 

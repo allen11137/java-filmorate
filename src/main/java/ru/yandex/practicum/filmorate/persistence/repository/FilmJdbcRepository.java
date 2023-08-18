@@ -40,15 +40,25 @@ public class FilmJdbcRepository {
     }
 
     private Optional<Rating> getMpaByFilmId(int id) {
-        String sql = "SELECT * FROM RATING r LEFT JOIN FILM_RATING fr ON fr.rating_id = r.id WHERE fr.FILM_ID = :filmId";
-        return jdbcTemplate.query(sql, Map.of("filmId", id), new DataClassRowMapper<>(Rating.class)).stream().findFirst();
+        String sql = "SELECT * FROM RATING r LEFT JOIN FILM_RATING fr ON fr.rating_id = r.id " +
+                "WHERE fr.FILM_ID = :filmId";
+        return jdbcTemplate.query(sql, Map.of("filmId", id), new DataClassRowMapper<>(Rating.class))
+                .stream()
+                .findFirst();
     }
 
     public void save(Film film) {
         id.getAndIncrement();
         film.setId(Integer.parseInt(String.valueOf(id)));
-        String sqlQuery = "INSERT INTO FILM (name, description, releaseDate, duration, rating, id) VALUES (:name, :description, :releaseDate, :duration, :rating, :id)";
-        jdbcTemplate.update(sqlQuery, Map.of("name", film.getName(), "description", film.getDescription(), "releaseDate", film.getReleaseDate(), "duration", film.getDuration(), "rating", film.getMpa().getId(), "id", film.getId()));
+        String sqlQuery = "INSERT INTO FILM (name, description, releaseDate, duration, rating, id) " +
+                "VALUES (:name, :description, :releaseDate, :duration, :rating, :id)";
+        jdbcTemplate.update(sqlQuery,
+                Map.of("name", film.getName(),
+                        "description", film.getDescription(),
+                        "releaseDate", film.getReleaseDate(),
+                        "duration", film.getDuration(),
+                        "rating", film.getMpa().getId(),
+                        "id", film.getId()));
         if (film.getMpa() != null) {
             String sqlQuery2 = "insert into film_rating (film_id, rating_id) values (:film_id, :rating_id)";
             jdbcTemplate.update(sqlQuery2, Map.of("film_id", film.getId(), "rating_id", film.getMpa().getId()));
@@ -69,8 +79,12 @@ public class FilmJdbcRepository {
                 "duration = :duration, " +
                 "rating = :rating " +
                 "WHERE ID = :id ";
-
-        jdbcTemplate.update(sql, Map.of("name", film.getName(), "description", film.getDescription(), "releaseDate", film.getReleaseDate(), "duration", film.getDuration(), "rating", film.getMpa().getId(), "id", film.getId()));
+        jdbcTemplate.update(sql, Map.of("name", film.getName(),
+                "description", film.getDescription(),
+                "releaseDate", film.getReleaseDate(),
+                "duration", film.getDuration(),
+                "rating", film.getMpa().getId(),
+                "id", film.getId()));
 
         String sqlUpdate = "update film_rating set RATING_ID = :rating_id where FILM_ID = :film_id";
         jdbcTemplate.update(sqlUpdate, Map.of("rating_id", film.getMpa().getId(), "film_id", film.getId()));
@@ -88,7 +102,9 @@ public class FilmJdbcRepository {
 
     public Optional<Film> findById(int id) {
         String sql = "SELECT * FROM FILM WHERE ID = :id";
-        return jdbcTemplate.query(sql, Map.of("id", id), new DataClassRowMapper<>(Film.class)).stream().findFirst();
+        return jdbcTemplate.query(sql, Map.of("id", id), new DataClassRowMapper<>(Film.class))
+                .stream()
+                .findFirst();
     }
 
     public void delete(Film film) {
