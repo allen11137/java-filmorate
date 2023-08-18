@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.exception.NotFoundGenreException;
 import ru.yandex.practicum.filmorate.persistence.model.Genre;
 import ru.yandex.practicum.filmorate.persistence.repository.GenreJdbcRepository;
-import ru.yandex.practicum.filmorate.persistence.repository.GenreRepository;
 
 import java.util.List;
 import java.util.Optional;

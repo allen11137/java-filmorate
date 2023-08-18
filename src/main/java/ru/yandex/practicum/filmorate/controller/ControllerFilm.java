@@ -17,46 +17,46 @@ import java.util.List;
 @RequestMapping("films")
 @RequiredArgsConstructor
 public class ControllerFilm {
-	private final ServiceFilm serviceFilm;
+    private final ServiceFilm serviceFilm;
 
-	@GetMapping
-	public List<Film> getListOfFilms() {
-		log.info("Список фильмов: {}", serviceFilm.getListOfFilms().size());
-		return new ArrayList<>(serviceFilm.getListOfFilms().values());
-	}
+    @GetMapping
+    public List<Film> getListOfFilms() {
+        log.info("Список фильмов: {}", serviceFilm.getListOfFilms().size());
+        return new ArrayList<>(serviceFilm.getListOfFilms().values());
+    }
 
-	@PostMapping
-	public ResponseEntity<Film> makeFilm(@RequestBody FilmRequest filmRequest) {
-		Film film = serviceFilm.verifyParametrOfFilm(filmRequest);
-		serviceFilm.addToFilm(film);
-		return ResponseEntity.status(HttpStatus.OK).body(film);
-	}
+    @PostMapping
+    public ResponseEntity<Film> makeFilm(@RequestBody FilmRequest filmRequest) {
+        Film film = serviceFilm.verifyParametrOfFilm(filmRequest);
+        serviceFilm.addToFilm(film);
+        return ResponseEntity.status(HttpStatus.OK).body(film);
+    }
 
-	@PutMapping
-	public ResponseEntity<Film> filmUpdate(@RequestBody FilmRequest filmRequest) {
-		Film film = serviceFilm.updateFilm(filmRequest);
-		return ResponseEntity.status(HttpStatus.OK).body(film);
-	}
+    @PutMapping
+    public ResponseEntity<Film> filmUpdate(@RequestBody FilmRequest filmRequest) {
+        Film film = serviceFilm.updateFilm(filmRequest);
+        return ResponseEntity.status(HttpStatus.OK).body(film);
+    }
 
-	@GetMapping("/{filmId}")
-	public ResponseEntity<Film> lookForFilm(@PathVariable int filmId) {
+    @GetMapping("/{filmId}")
+    public ResponseEntity<Film> lookForFilm(@PathVariable int filmId) {
 
-		return ResponseEntity.status(HttpStatus.OK).body(serviceFilm.getOfIdFilm(filmId));
-	}
+        return ResponseEntity.status(HttpStatus.OK).body(serviceFilm.getOfIdFilm(filmId));
+    }
 
-	@PutMapping("/{id}/like/{userId}")
-	public ResponseEntity<Film> favouriteFilms(@PathVariable int id, @PathVariable int userId) {
-		return ResponseEntity.status(HttpStatus.OK).body(serviceFilm.joinLikeToFilm(id, userId));
-	}
+    @PutMapping("/{id}/like/{userId}")
+    public ResponseEntity<Film> favouriteFilms(@PathVariable int id, @PathVariable int userId) {
+        return ResponseEntity.status(HttpStatus.OK).body(serviceFilm.joinLikeToFilm(id, userId));
+    }
 
-	@DeleteMapping("/{id}/like/{userId}")
-	public ResponseEntity<Film> deleteLikeInFilm(@PathVariable int id, @PathVariable int userId) {
-		return ResponseEntity.status(HttpStatus.OK).body(serviceFilm.deleteToLike(id, userId));
-	}
+    @DeleteMapping("/{id}/like/{userId}")
+    public ResponseEntity<Film> deleteLikeInFilm(@PathVariable int id, @PathVariable int userId) {
+        return ResponseEntity.status(HttpStatus.OK).body(serviceFilm.deleteToLike(id, userId));
+    }
 
-	@GetMapping("/popular")
-	public ResponseEntity<List<Film>> getFavoriteFilm(@RequestParam(defaultValue = "10", required = false) int count) {
-		return ResponseEntity.status(HttpStatus.OK).body(serviceFilm.getListOfLovelyFilms(count));
-	}
+    @GetMapping("/popular")
+    public ResponseEntity<List<Film>> getFavoriteFilm(@RequestParam(defaultValue = "10", required = false) int count) {
+        return ResponseEntity.status(HttpStatus.OK).body(serviceFilm.getListOfLovelyFilms(count));
+    }
 }
 

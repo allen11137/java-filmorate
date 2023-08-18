@@ -5,9 +5,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Data
@@ -22,8 +20,8 @@ public class Film {
     @ManyToMany
     @JoinTable(
             name = "GENRE_FILM",
-            joinColumns = { @JoinColumn(name = "film_id") },
-            inverseJoinColumns = { @JoinColumn(name = "genre_id") }
+            joinColumns = {@JoinColumn(name = "film_id")},
+            inverseJoinColumns = {@JoinColumn(name = "genre_id")}
     )
     @Column(name = "GENRE")
     private Set<Genre> genres = new HashSet<>();

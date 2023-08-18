@@ -170,9 +170,9 @@ public class FilmJdbcRepository {
 
     public void deleteLike(int filmId, int idOfUser) {
         String sql = """
-            DELETE FROM LIST_LIKES
-            WHERE person_id = :idOfUser and film_id = :filmId
-            """;
+                DELETE FROM LIST_LIKES
+                WHERE person_id = :idOfUser and film_id = :filmId
+                """;
         jdbcTemplate.update(sql, Map.of("idOfUser", idOfUser, "filmId", filmId));
     }
 

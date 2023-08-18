@@ -4,7 +4,6 @@ import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.persistence.model.Film;
 import ru.yandex.practicum.filmorate.persistence.model.Genre;
 
 import javax.sql.DataSource;

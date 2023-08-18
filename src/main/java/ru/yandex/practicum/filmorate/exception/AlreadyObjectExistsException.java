@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class AlreadyObjectExistsException extends RuntimeException {
-	public AlreadyObjectExistsException(String message) {
-		super(message);
-	}
+    public AlreadyObjectExistsException(String message) {
+        super(message);
+    }
 }

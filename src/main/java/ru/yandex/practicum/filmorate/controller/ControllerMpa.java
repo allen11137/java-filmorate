@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.persistence.model.Rating;
 import ru.yandex.practicum.filmorate.persistence.repository.RatingJdbcRepository;
-import ru.yandex.practicum.filmorate.persistence.repository.RatingRepository;
 
 import java.util.List;
 import java.util.Optional;

@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.exception.NotFoundFilmException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.persistence.model.Film;
 import ru.yandex.practicum.filmorate.persistence.model.Genre;
-import ru.yandex.practicum.filmorate.persistence.model.Rating;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.time.LocalDate;
