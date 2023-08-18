@@ -26,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class ControllerFilmTest {
-
     private final FilmDbStorage filmDbStorage;
     private Validator validator;
     private Film film;
