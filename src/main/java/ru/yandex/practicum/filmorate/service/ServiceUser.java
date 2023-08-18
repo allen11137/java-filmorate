@@ -1,62 +1,115 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.AlreadyObjectExistsException;
+import ru.yandex.practicum.filmorate.exception.NotFoundUserException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.persistence.model.Person;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ServiceUser {
-	public final Set<User> amountOfUsers = new HashSet<>();
-	public static final AtomicInteger idOfUser = new AtomicInteger();
+	private final UserStorage userStorage;
 
-	static {
-		idOfUser.set(1);
-	}
-
-	public User verifyOptionsOfUser(User user) throws ValidationException {
-		if (user.getLogin() == null || user.getLogin().isBlank()) {
-			throw new ValidationException("Неправильное имя User");
-		} else if (user.getEmail().isBlank() || !EmailValidator.getInstance().isValid(user.getEmail())) {
-			throw new ValidationException("Неправильный адрес электронной почты");
-		} else if (user.getBirthday().isAfter(LocalDate.now())) {
-			throw new ValidationException("Неправильная дата рождения");
+	public void addUser(Person person) {
+		if (!isContainsUser(person)) {
+			userStorage.addUser(verifyOptionsOfUser(person));
+			log.info("User добавлен: {}", person);
 		} else {
-			if (user.getName() == null || user.getName().isBlank()) {
-				user.setName(user.getLogin());
-			}
-			return user;
+			throw new AlreadyObjectExistsException(String.format("Пользователь %s уже был добавлен", person.getName()));
 		}
 	}
 
-	public void renewInfoOfUser(User user) {
-		amountOfUsers.forEach(a -> {
-			if (a.getId() == user.getId()) {
-				a.setName(user.getName());
-				a.setBirthday(user.getBirthday());
-				a.setLogin(user.getLogin());
-				a.setEmail(user.getEmail());
+	public void renewInfoOfUser(Person person) {
+		verifyOptionsOfUser(person);
+		if (isContainsUser(person)) {
+			userStorage.renewInfoOfUser(person);
+			log.info("Данные о пользователе обновлены: {}", person);
+		} else {
+			throw new NotFoundUserException(person.getId());
+		}
+	}
+
+	public void deleteToUser(Person person) {
+		if (isContainsUser(person)) {
+			userStorage.deleteToUser(person);
+		} else {
+			throw new NotFoundUserException(person.getId());
+		}
+	}
+
+	public List<Person> getUsers() {
+		return new ArrayList<>(userStorage.getAll().values());
+	}
+
+	public Person getOfUser(Integer idOfUser) {
+		Optional<Person> person = userStorage.getById(idOfUser);
+		if (person.isPresent()) {
+			log.info("Пользователь idOfUser {}", idOfUser);
+			return person.get();
+		} else {
+			throw new NotFoundUserException(idOfUser);
+		}
+	}
+
+	public Person userFriends(int idOfUser, int idOfFriend) {
+		Person person = getOfUser(idOfUser);
+		getOfUser(idOfFriend);
+		if ((idOfUser != idOfFriend)) {
+			userStorage.addFriendToPerson(idOfUser, idOfFriend);
+			log.info("Друг добавлен {}", idOfFriend);
+			return person;
+		} else {
+			throw new ValidationException("Id пользователя не может совпадать с id друга");
+		}
+	}
+
+	public Person deleteFromFriends(int idOfUser, int idOfFriend) {
+		userStorage.removeFriend(idOfUser, idOfFriend);
+		log.info("Пользователь удален из друзей {}", idOfFriend);
+		return getOfUser(idOfFriend);
+	}
+
+	public List<Person> amountOfFriends(int idOfUser) {
+		List<Person> friends = userStorage.getAllFriends(idOfUser);
+		log.info("Список друзей пользователя {}", idOfUser);
+		return friends;
+	}
+
+	public List<Person> mainFriends(int idOfUser, int idOfFriend) {
+		List<Person> listOfFriend = userStorage.findAllMainFriends(idOfUser, idOfFriend);
+		log.info("Список общих друзей с пользователем {}", idOfUser);
+		return listOfFriend;
+	}
+
+	public Person verifyOptionsOfUser(Person person) throws ValidationException {
+		if (person.getLogin() == null || person.getLogin().isBlank()) {
+			throw new ValidationException("Неправильное имя User");
+		} else if (person.getEmail().isBlank() || !EmailValidator.getInstance().isValid(person.getEmail())) {
+			throw new ValidationException("Неправильный адрес электронной почты");
+		} else if (person.getBirthday() == null || person.getBirthday().isAfter(LocalDate.now())) {
+			throw new ValidationException("Неправильная дата рождения");
+		} else {
+			if (person.getName() == null || person.getName().isBlank()) {
+				person.setName(person.getLogin());
 			}
-			log.info("Информация о user обновлена: {}", user);
-		});
+			return person;
+		}
 	}
 
-	public void addUser(User user) {
-		int andIncrement = idOfUser.getAndIncrement();
-		user.setId(andIncrement);
-		log.info("User добавлен: {}", user);
-		amountOfUsers.add(user);
+	public boolean isContainsUser(Person person) {
+		return userStorage.getAll().containsKey(person.getId());
 	}
-
-	public boolean checkAddOfUsers(User user) {
-		return amountOfUsers.stream().anyMatch(a -> a.getId() == user.getId());
-	}
-
 }
+
