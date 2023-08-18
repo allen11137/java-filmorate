@@ -11,12 +11,12 @@ import java.util.List;
 
 public interface FilmRepository extends JpaRepository<Film, Integer> {
     @Query(value = """
-            SELECT *, 
-                (SELECT count(l.*) from LIST_LIKES l 
-                WHERE l.film_id = id) AS likes 
-            FROM FILM 
-            ORDER BY 
-            likes DESC 
+            SELECT *,
+                (SELECT count(l.*) from LIST_LIKES l
+                WHERE l.film_id = id) AS likes
+            FROM FILM
+            ORDER BY
+            likes DESC
             LIMIT :amount
             """,
             nativeQuery = true)
