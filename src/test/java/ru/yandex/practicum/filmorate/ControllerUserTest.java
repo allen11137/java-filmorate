@@ -53,11 +53,19 @@ class ControllerUserTest {
     @Test
     void newUserWrongLoginTest() {
         person.setBirthday(LocalDate.now().plusYears(3));
+
+        userStorage.renewInfoOfUser(person);
+        Optional<Person> person1 = userStorage.getById(person.getId());
+        assertEquals(LocalDate.now().plusYears(3), person1.get().getBirthday());
     }
 
     @Test
     void newUserWrongEmailTest() {
         person.setEmail("alisaalisa.yandex.ru");
+
+        userStorage.renewInfoOfUser(person);
+        Optional<Person> person1 = userStorage.getById(person.getId());
+        assertEquals("alisaalisa.yandex.ru", person1.get().getEmail());
     }
 
     @AfterEach
