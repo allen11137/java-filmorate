@@ -23,16 +23,12 @@ public class RatingJdbcRepository {
     }
 
     public List<Rating> findAll() {
-        String sql = """
-                SELECT * FROM RATING
-                """;
+        String sql = "SELECT * FROM RATING";
         return jdbcTemplate.query(sql, new DataClassRowMapper<>(Rating.class));
     }
 
     public Optional<Rating> findById(Integer id) {
-        String sql = """
-                SELECT * FROM RATING WHERE ID = :id
-                """;
+        String sql = "SELECT * FROM RATING WHERE ID = :id";
         return jdbcTemplate.query(sql, Map.of("id", id), new DataClassRowMapper<>(Rating.class))
                 .stream()
                 .findFirst();

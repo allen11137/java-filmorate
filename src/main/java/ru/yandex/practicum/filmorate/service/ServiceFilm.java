@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -108,7 +109,7 @@ public class ServiceFilm {
             genres = filmStorage.getGenres(filmRequest.getGenres()
                     .stream()
                     .map(FilmRequest.Genre::getId)
-                    .toList());
+                    .collect(Collectors.toList()));
         }
 
         Film film = new Film();

@@ -10,31 +10,20 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 public interface FilmRepository extends JpaRepository<Film, Integer> {
-    @Query(value = """
-            SELECT *,
-                (SELECT count(l.*) from LIST_LIKES l
-                WHERE l.film_id = id) AS likes
-            FROM FILM
-            ORDER BY
-            likes DESC
-            LIMIT :amount
-            """,
+    @Query(value = "(SELECT count(l.*) from LIST_LIKES l WHERE l.film_id = id) AS likes " +
+            "FROM FILM ORDER BY likes DESC LIMIT :amount",
             nativeQuery = true)
     List<Film> findFavoriteFilmsWithLimit(@Param("amount") int amount);
 
     @Modifying
     @Transactional
-    @Query(value = """
-            INSERT INTO LIST_LIKES (person_id, film_id)
-            VALUES (:idOfUser, :filmId)
-            """, nativeQuery = true)
+    @Query(value = "INSERT INTO LIST_LIKES (person_id, film_id) " +
+            "VALUES (:idOfUser, :filmId)", nativeQuery = true)
     void addLikeToFilm(@Param("filmId") int filmId, @Param("idOfUser") int idOfUser);
 
     @Modifying
     @Transactional
-    @Query(value = """
-            DELETE FROM LIST_LIKES
-            WHERE person_id = :idOfUser and film_id = :filmId
-            """, nativeQuery = true)
+    @Query(value = "DELETE FROM LIST_LIKES " +
+            "WHERE person_id = :idOfUser and film_id = :filmId", nativeQuery = true)
     void deleteLike(int filmId, int idOfUser);
 }

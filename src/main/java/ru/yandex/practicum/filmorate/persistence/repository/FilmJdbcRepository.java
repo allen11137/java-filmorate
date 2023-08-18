@@ -25,9 +25,7 @@ public class FilmJdbcRepository {
     }
 
     public List<Film> findAll() {
-        String sql = """
-                SELECT * FROM FILM
-                """;
+        String sql = "SELECT * FROM FILM";
         List<Film> films = jdbcTemplate.query(sql, new DataClassRowMapper<>(Film.class));
         films.forEach(film -> {
             film.setMpa(getMpaByFilmId(film.getId()).orElse(new Rating(1, "G")));
@@ -37,30 +35,19 @@ public class FilmJdbcRepository {
     }
 
     private Set<Genre> getGenresByFilmId(int id) {
-        String sql = """
-                SELECT * FROM GENRE g
-                LEFT JOIN GENRE_FILM gf ON gf.genre_id = g.id
-                WHERE gf.film_id = :id
-                """;
+        String sql = "SELECT * FROM GENRE g LEFT JOIN GENRE_FILM gf ON gf.genre_id = g.id WHERE gf.film_id = :id";
         return new HashSet<>(jdbcTemplate.query(sql, Map.of("id", id), new DataClassRowMapper<>(Genre.class)));
     }
 
     private Optional<Rating> getMpaByFilmId(int id) {
-        String sql = """
-                SELECT * FROM RATING r
-                LEFT JOIN FILM_RATING fr ON fr.rating_id = r.id
-                WHERE fr.FILM_ID = :filmId
-                """;
+        String sql = "SELECT * FROM RATING r LEFT JOIN FILM_RATING fr ON fr.rating_id = r.id WHERE fr.FILM_ID = :filmId";
         return jdbcTemplate.query(sql, Map.of("filmId", id), new DataClassRowMapper<>(Rating.class)).stream().findFirst();
     }
 
     public void save(Film film) {
         id.getAndIncrement();
         film.setId(Integer.parseInt(String.valueOf(id)));
-        String sqlQuery = """
-                INSERT INTO FILM (name, description, releaseDate, duration, rating, id)
-                VALUES (:name, :description, :releaseDate, :duration, :rating, :id)
-                """;
+        String sqlQuery = "INSERT INTO FILM (name, description, releaseDate, duration, rating, id) VALUES (:name, :description, :releaseDate, :duration, :rating, :id)";
         jdbcTemplate.update(sqlQuery, Map.of("name", film.getName(), "description", film.getDescription(), "releaseDate", film.getReleaseDate(), "duration", film.getDuration(), "rating", film.getMpa().getId(), "id", film.getId()));
         if (film.getMpa() != null) {
             String sqlQuery2 = "insert into film_rating (film_id, rating_id) values (:film_id, :rating_id)";
@@ -75,15 +62,13 @@ public class FilmJdbcRepository {
     }
 
     public Film update(Film film) {
-        String sql = """
-                UPDATE FILM
-                SET name        = :name,
-                    description = :description,
-                    releaseDate = :releaseDate,
-                    duration    = :duration,
-                    rating      = :rating  \s
-                WHERE ID = :id
-                """;
+        String sql = "UPDATE FILM " +
+                "SET name = :name, " +
+                "description = :description, " +
+                "releaseDate = :releaseDate, " +
+                "duration = :duration, " +
+                "rating = :rating " +
+                "WHERE ID = :id ";
 
         jdbcTemplate.update(sql, Map.of("name", film.getName(), "description", film.getDescription(), "releaseDate", film.getReleaseDate(), "duration", film.getDuration(), "rating", film.getMpa().getId(), "id", film.getId()));
 
@@ -102,29 +87,21 @@ public class FilmJdbcRepository {
     }
 
     public Optional<Film> findById(int id) {
-        String sql = """
-                SELECT * FROM FILM WHERE ID = :id
-                """;
+        String sql = "SELECT * FROM FILM WHERE ID = :id";
         return jdbcTemplate.query(sql, Map.of("id", id), new DataClassRowMapper<>(Film.class)).stream().findFirst();
     }
 
     public void delete(Film film) {
-        String sql = """
-                DELETE FROM FILM WHERE ID = :id
-                """;
+        String sql = "DELETE FROM FILM WHERE ID = :id";
         jdbcTemplate.update(sql, Map.of("id", film.getId()));
     }
 
     public List<Film> findFavoriteFilmsWithLimit(Integer amount) {
-        String sql = """
-                SELECT *,
-                    (SELECT count(l.*) from LIST_LIKES l
-                    WHERE l.film_id = id) AS likes
-                FROM FILM
-                ORDER BY
-                likes DESC
-                LIMIT :amount
-                """;
+        String sql = "SELECT *, " +
+                "(SELECT count(l.*) from LIST_LIKES l WHERE l.film_id = id) AS likes " +
+                "FROM FILM " +
+                "ORDER BY likes " +
+                "DESC LIMIT :amount";
         List<Film> films = jdbcTemplate.query(sql, Map.of("amount", amount), new DataClassRowMapper<>(Film.class));
         films.forEach(film -> {
             film.setMpa(getMpaByFilmId(film.getId()).orElse(new Rating(1, "G")));
@@ -134,18 +111,13 @@ public class FilmJdbcRepository {
     }
 
     public void addLikeToFilm(int filmId, int idOfUser) {
-        String sql = """
-                INSERT INTO LIST_LIKES (person_id, film_id)
-                VALUES (:idOfUser, :filmId)
-                """;
+        String sql = "INSERT INTO LIST_LIKES (person_id, film_id) VALUES (:idOfUser, :filmId)";
         jdbcTemplate.update(sql, Map.of("idOfUser", idOfUser, "filmId", filmId));
     }
 
     public void deleteLike(int filmId, int idOfUser) {
-        String sql = """
-                DELETE FROM LIST_LIKES
-                WHERE person_id = :idOfUser and film_id = :filmId
-                """;
+        String sql = "DELETE FROM LIST_LIKES " +
+                "WHERE person_id = :idOfUser and film_id = :filmId";
         jdbcTemplate.update(sql, Map.of("idOfUser", idOfUser, "filmId", filmId));
     }
 

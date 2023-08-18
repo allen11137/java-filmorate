@@ -23,16 +23,12 @@ public class GenreJdbcRepository {
     }
 
     public List<Genre> findAll() {
-        String sql = """
-                SELECT * FROM GENRE
-                """;
+        String sql = "SELECT * FROM GENRE";
         return jdbcTemplate.query(sql, new DataClassRowMapper<>(Genre.class));
     }
 
     public Optional<Genre> findById(Integer id) {
-        String sql = """
-                SELECT * FROM GENRE WHERE ID = :id
-                """;
+        String sql = "SELECT * FROM GENRE WHERE ID = :id";
         return jdbcTemplate.query(sql, Map.of("id", id), new DataClassRowMapper<>(Genre.class))
                 .stream()
                 .findFirst();

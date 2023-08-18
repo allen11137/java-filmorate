@@ -67,6 +67,6 @@ public class UserDbStorage implements UserStorage {
         List<Person> friendsForSecondPerson = jdbcRepository.findAllFriends(idOfFriend);
         return friendsForFirstPerson.stream()
                 .filter(friendsForSecondPerson::contains)
-                .toList();
+                .collect(Collectors.toList());
     }
 }

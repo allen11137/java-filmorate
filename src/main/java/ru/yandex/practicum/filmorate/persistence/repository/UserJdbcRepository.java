@@ -43,14 +43,8 @@ public class UserJdbcRepository {
 
     public void update(Person person) {
         SqlParameterSource parameterSource = new BeanPropertySqlParameterSource(person);
-        String sql = """
-                UPDATE PERSON
-                SET email    = :email,
-                    login    = :login,
-                    name     = :name,
-                    birthday = :birthday
-                WHERE ID = :id
-                """;
+        String sql = "UPDATE PERSON SET email    = :email, login    = :login, " +
+                "name     = :name, birthday = :birthday WHERE ID = :id";
         jdbcTemplate.update(sql, parameterSource);
     }
 
@@ -72,28 +66,20 @@ public class UserJdbcRepository {
     }
 
     public void updatePersonFriend(int idOfUser, int idOfFriend) {
-        String sql = """
-                INSERT INTO FRIENDSHIP (person_id, friend_id, status_of_friend)
-                VALUES (:idOfUser, :idOfFriend, true)
-                """;
+        String sql = "INSERT INTO FRIENDSHIP (person_id, friend_id, status_of_friend) " +
+                "VALUES (:idOfUser, :idOfFriend, true)";
         jdbcTemplate.update(sql, Map.of("idOfUser", idOfUser, "idOfFriend", idOfFriend));
     }
 
     public void deleteFriend(int idOfUser, int idOfFriend) {
-        String sql = """
-                    UPDATE FRIENDSHIP
-                    SET status_of_friend = false
-                    WHERE person_id = :idOfUser and friend_id = :idOfFriend
-                """;
+        String sql = "UPDATE FRIENDSHIP SET status_of_friend = false " +
+                "WHERE person_id = :idOfUser and friend_id = :idOfFriend";
         jdbcTemplate.update(sql, Map.of("idOfUser", idOfUser, "idOfFriend", idOfFriend));
     }
 
     public List<Person> findAllFriends(int idOfUser) {
-        String sql = """
-                     SELECT * FROM PERSON p
-                     LEFT JOIN FRIENDSHIP f ON f.friend_id = p.id
-                     WHERE f.person_id = :idOfUser and f.status_of_friend = true
-                """;
+        String sql = "SELECT * FROM PERSON p LEFT JOIN FRIENDSHIP f ON f.friend_id = p.id" +
+                "WHERE f.person_id = :idOfUser and f.status_of_friend = true";
         return jdbcTemplate.query(sql, Map.of("idOfUser", idOfUser), new DataClassRowMapper<>(Person.class));
     }
 }
