@@ -146,4 +146,14 @@ public class FilmJdbcRepository {
         String sql = "SELECT * FROM GENRE WHERE ID IN (:idsGenre)";
         return new HashSet<>(jdbcTemplate.query(sql, Map.of("idsGenre", idsGenre), new DataClassRowMapper<>(Genre.class)));
     }
+
+    public boolean isExistLike(int filmId, int idOfUser) {
+        String sql = "SELECT * FROM FILM f " +
+                "LEFT JOIN LIST_LIKES ll ON ll.film_id = f.id " +
+                "WHERE f.id = :filmId AND ll.person_id = :idOfUser";
+        return jdbcTemplate.query(sql, Map.of("idOfUser", idOfUser, "filmId", filmId), new DataClassRowMapper<>(Film.class))
+                .stream()
+                .findFirst()
+                .isPresent();
+    }
 }

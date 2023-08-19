@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.controller.request.PersonRequest;
+import ru.yandex.practicum.filmorate.controller.response.PersonResponse;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.persistence.model.Person;
@@ -26,14 +28,14 @@ public class ControllerUser {
     }
 
     @PostMapping
-    ResponseEntity<Person> makeUser(@RequestBody Person person) {
-        serviceUser.addUser(person);
-        return ResponseEntity.status(HttpStatus.OK).body(person);
+    ResponseEntity<PersonResponse> makeUser(@RequestBody PersonRequest personRequest) {
+        PersonResponse personResponse = serviceUser.addUser(personRequest);
+        return ResponseEntity.status(HttpStatus.OK).body(personResponse);
     }
 
     @PutMapping
-    ResponseEntity<Person> userUpdate(@RequestBody Person person) throws NotFoundException, ValidationException {
-        serviceUser.renewInfoOfUser(person);
+    ResponseEntity<PersonResponse> userUpdate(@RequestBody PersonRequest personRequest) throws NotFoundException, ValidationException {
+        PersonResponse person = serviceUser.renewInfoOfUser(personRequest);
         return ResponseEntity.status(HttpStatus.OK).body(person);
     }
 

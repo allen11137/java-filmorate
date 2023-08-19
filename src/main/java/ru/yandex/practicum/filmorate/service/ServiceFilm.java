@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.controller.request.FilmRequest;
 import ru.yandex.practicum.filmorate.exception.AlreadyObjectExistsException;
+import ru.yandex.practicum.filmorate.exception.LikeExistException;
 import ru.yandex.practicum.filmorate.exception.NotFoundFilmException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.persistence.model.Film;
@@ -28,7 +29,7 @@ public class ServiceFilm {
     private final ServiceUser serviceUser;
 
     public void addToFilm(Film film) {
-        if (!verifyOptionsOfFilm(film.getId())) {
+        if (!verifyOptionsOfFilmByIdOrName(film.getId(), film.getName())) {
             filmStorage.addToFilm(film);
             log.info("Фильм добавлен: {}", film);
         } else {
@@ -70,6 +71,15 @@ public class ServiceFilm {
         return getListOfFilms().containsKey(id);
     }
 
+    public boolean verifyOptionsOfFilmByIdOrName(Integer id, String name) {
+        Map<Integer, Film> films = getListOfFilms();
+        if (films.containsKey(id)) {
+            return true;
+        }
+
+        return films.values().stream().anyMatch(f -> f.getName().equals(name));
+    }
+
     public List<Film> getListOfLovelyFilms(int amount) {
         List<Film> fs = filmStorage.getListFavoriteFilms(amount);
         log.info("getListOfLovelyFilms {}", fs);
@@ -78,9 +88,18 @@ public class ServiceFilm {
 
     public Film joinLikeToFilm(int filmId, int idOfUser) {
         serviceUser.getOfUser(idOfUser);
+        getOfIdFilm(filmId);
+        isExistLike(filmId, idOfUser);
         filmStorage.addLikeToFilm(filmId, idOfUser);
         log.info("joinLikeToFilm {}", getOfIdFilm(filmId));
         return getOfIdFilm(filmId);
+    }
+
+    private void isExistLike(int filmId, int idOfUser) {
+        boolean exist = filmStorage.isExistLike(filmId, idOfUser);
+        if (exist) {
+            throw new LikeExistException();
+        }
     }
 
     public Film deleteToLike(int filmId, int idOfUser) {

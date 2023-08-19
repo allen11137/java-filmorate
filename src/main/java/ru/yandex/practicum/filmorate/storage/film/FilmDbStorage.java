@@ -99,4 +99,9 @@ public class FilmDbStorage implements FilmStorage {
     public Set<Genre> getGenres(List<Integer> idsGenre) {
         return jdbcRepository.findAllByIdIsIn(idsGenre);
     }
+
+    @Override
+    public boolean isExistLike(int filmId, int idOfUser) {
+        return jdbcRepository.isExistLike(filmId, idOfUser);
+    }
 }

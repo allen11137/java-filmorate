@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface UserStorage {
-    void addUser(Person person);
+    Person addUser(Person person);
 
     void renewInfoOfUser(Person person);
 

@@ -27,4 +27,6 @@ public interface FilmStorage {
     Rating getMpas(Integer mpa);
 
 	Set<Genre> getGenres(List<Integer> idsGenre);
+
+	boolean isExistLike(int filmId, int idOfUser);
 }

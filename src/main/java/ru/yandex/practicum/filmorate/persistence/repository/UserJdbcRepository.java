@@ -31,7 +31,7 @@ public class UserJdbcRepository {
         this.dataSource = dataSource;
     }
 
-    public void save(Person person) {
+    public Person save(Person person) {
         id.getAndIncrement();
         person.setId(Integer.parseInt(String.valueOf(id)));
         SqlParameterSource parameterSource = new BeanPropertySqlParameterSource(person);
@@ -39,6 +39,7 @@ public class UserJdbcRepository {
                 .withTableName(TABLE_NAME)
                 .usingGeneratedKeyColumns(ID);
         simpleJdbcInsert.execute(parameterSource);
+        return person;
     }
 
     public void update(Person person) {

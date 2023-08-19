@@ -40,7 +40,6 @@ public class ControllerFilm {
 
     @GetMapping("/{filmId}")
     public ResponseEntity<Film> lookForFilm(@PathVariable int filmId) {
-
         return ResponseEntity.status(HttpStatus.OK).body(serviceFilm.getOfIdFilm(filmId));
     }
 

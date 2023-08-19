@@ -4,7 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.controller.request.PersonRequest;
+import ru.yandex.practicum.filmorate.controller.response.PersonResponse;
 import ru.yandex.practicum.filmorate.exception.AlreadyObjectExistsException;
+import ru.yandex.practicum.filmorate.exception.FriendExistException;
 import ru.yandex.practicum.filmorate.exception.NotFoundUserException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.persistence.model.Person;
@@ -21,30 +24,34 @@ import java.util.Optional;
 public class ServiceUser {
     private final UserStorage userStorage;
 
-    public void addUser(Person person) {
-        if (!isContainsUser(person)) {
-            userStorage.addUser(verifyOptionsOfUser(person));
+    public PersonResponse addUser(PersonRequest personRequest) {
+        if (!isContainsUser(personRequest)) {
+            Person person = userStorage.addUser(verifyOptionsOfUser(personRequest));
             log.info("User добавлен: {}", person);
+            return getPersonResponse(person);
         } else {
-            throw new AlreadyObjectExistsException(String.format("Пользователь %s уже был добавлен", person.getName()));
+            throw new AlreadyObjectExistsException(String.format("Пользователь %s уже был добавлен", personRequest.getName()));
         }
     }
 
-    public void renewInfoOfUser(Person person) {
-        verifyOptionsOfUser(person);
-        if (isContainsUser(person)) {
+    private PersonResponse getPersonResponse(Person person) {
+        return PersonResponse.builder()
+                .id(person.getId())
+                .login(person.getLogin())
+                .email(person.getEmail())
+                .name(person.getName())
+                .birthday(person.getBirthday())
+                .build();
+    }
+
+    public PersonResponse renewInfoOfUser(PersonRequest personRequest) {
+        Person person = verifyOptionsOfUser(personRequest);
+        if (isContainsUser(personRequest)) {
             userStorage.renewInfoOfUser(person);
-            log.info("Данные о пользователе обновлены: {}", person);
+            log.info("Данные о пользователе обновлены: {}", personRequest);
+            return getPersonResponse(person);
         } else {
-            throw new NotFoundUserException(person.getId());
-        }
-    }
-
-    public void deleteToUser(Person person) {
-        if (isContainsUser(person)) {
-            userStorage.deleteToUser(person);
-        } else {
-            throw new NotFoundUserException(person.getId());
+            throw new NotFoundUserException(personRequest.getId());
         }
     }
 
@@ -65,7 +72,13 @@ public class ServiceUser {
     public Person userFriends(int idOfUser, int idOfFriend) {
         Person person = getOfUser(idOfUser);
         getOfUser(idOfFriend);
-        if ((idOfUser != idOfFriend)) {
+
+        List<Person> friends = userStorage.getAllFriends(idOfUser);
+        if (friends.stream().anyMatch(f -> f.getId() == idOfFriend)) {
+            throw new FriendExistException();
+        }
+
+        if (idOfUser != idOfFriend) {
             userStorage.addFriendToPerson(idOfUser, idOfFriend);
             log.info("Друг добавлен {}", idOfFriend);
             return person;
@@ -92,23 +105,27 @@ public class ServiceUser {
         return listOfFriend;
     }
 
-    public Person verifyOptionsOfUser(Person person) throws ValidationException {
-        if (person.getLogin() == null || person.getLogin().isBlank()) {
+    public Person verifyOptionsOfUser(PersonRequest personRequest) throws ValidationException {
+        if (personRequest.getLogin() == null || personRequest.getLogin().isBlank()) {
             throw new ValidationException("Неправильное имя User");
-        } else if (person.getEmail().isBlank() || !EmailValidator.getInstance().isValid(person.getEmail())) {
+        } else if (personRequest.getEmail() == null || personRequest.getEmail().isBlank() || !EmailValidator.getInstance().isValid(personRequest.getEmail())) {
             throw new ValidationException("Неправильный адрес электронной почты");
-        } else if (person.getBirthday() == null || person.getBirthday().isAfter(LocalDate.now())) {
+        } else if (personRequest.getBirthday() == null || personRequest.getBirthday().isAfter(LocalDate.now())) {
             throw new ValidationException("Неправильная дата рождения");
-        } else {
-            if (person.getName() == null || person.getName().isBlank()) {
-                person.setName(person.getLogin());
-            }
-            return person;
+        } else if (personRequest.getName() == null || personRequest.getName().isBlank()) {
+            personRequest.setName(personRequest.getLogin());
         }
+        Person person = new Person();
+        person.setId(personRequest.getId());
+        person.setName(personRequest.getName());
+        person.setEmail(personRequest.getEmail());
+        person.setBirthday(personRequest.getBirthday());
+        person.setLogin(personRequest.getLogin());
+        return person;
     }
 
-    public boolean isContainsUser(Person person) {
-        return userStorage.getAll().containsKey(person.getId());
+    public boolean isContainsUser(PersonRequest personRequest) {
+        return userStorage.getAll().containsKey(personRequest.getId());
     }
 }
 
